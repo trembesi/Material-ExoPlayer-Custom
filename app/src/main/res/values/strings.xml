@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Material ExoPlayer Custom</string>
+
+
+    <string name="notif_noinet0">ups, you are offline!</string>
+    <string name="notif_noinet1">this app requires an internet connection</string>
+    <string name="notif_server_error0">an error occurred on the server!</string>
+    <string name="notif_server_error1">please try again later.</string>
+    <string name="notif_url_error">Error URL</string>
+    <string name="snackbar_btn_tutup">CLOSE</string>
+
+</resources>
