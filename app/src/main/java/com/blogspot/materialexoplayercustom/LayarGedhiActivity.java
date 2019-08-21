@@ -1,6 +1,5 @@
 package com.blogspot.materialexoplayercustom;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -15,9 +14,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.blogspot.materialexoplayercustom.player.ExoKangji;
-import com.blogspot.materialexoplayercustom.player.StelKendoLayarTancep;
+import com.blogspot.materialexoplayercustom.player.ConfigPlayerKangji;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 
@@ -145,8 +143,8 @@ public class LayarGedhiActivity extends AppCompatActivity {
     }
 
     private void njupukData() {
-        if (getIntent().hasExtra(StelKendoLayarTancep.KEY_VIDEO_URI)) {
-            videoLink = getIntent().getStringExtra(StelKendoLayarTancep.KEY_VIDEO_URI);
+        if (getIntent().hasExtra(ConfigPlayerKangji.KEY_VIDEO_URI)) {
+            videoLink = getIntent().getStringExtra(ConfigPlayerKangji.KEY_VIDEO_URI);
             Log.d("==LAPORAN==", "videoLink: " + videoLink);
         }
     }

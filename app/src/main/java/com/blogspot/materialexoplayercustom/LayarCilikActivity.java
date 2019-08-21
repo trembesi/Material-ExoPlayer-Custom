@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.blogspot.materialexoplayercustom.player.ExoKangji;
-import com.blogspot.materialexoplayercustom.player.StelKendoLayarTancep;
+import com.blogspot.materialexoplayercustom.player.ConfigPlayerKangji;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 
@@ -29,15 +29,16 @@ import at.huber.youtubeExtractor.YtFile;
 public class LayarCilikActivity extends AppCompatActivity {
 
     private String TAG = "=== " + LayarCilikActivity.class.getSimpleName() + " ===";
-    private Button btnTest;
     private PlayerView mPlayerViewCilik;
     private String videoLink;
     private ImageView ivFullscreen;
     private FrameLayout btnFrameFullscreen;
     private boolean isFullScreen;
     private String fullscreenVideoLink;
-
     private ProgressBar pbBuffer;
+
+    private Button btnTestVid1, btnTestVid2;
+    private String testVideoLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +66,7 @@ public class LayarCilikActivity extends AppCompatActivity {
         //priksoData();
         //ExoKangji.getSharedInstance().exoPlayerListener();
 
-        pbBuffer = findViewById(R.id.lc_pb_buffer);
+        pbBuffer = findViewById(R.id.new_lc_pb_buffer);
 
         if (videoLink != null && mPlayerViewCilik != null) {
             //ExoKangji.getSharedInstance().persiapanExoPlayer(getActivity(), mPlayerViewCilik, videoLink);
@@ -115,23 +116,32 @@ public class LayarCilikActivity extends AppCompatActivity {
    */
     private void notoLayarCilik() {
         getSupportActionBar().setTitle("Layar Tancep Activity");
-        btnTest = findViewById(R.id.lc_btn_test);
-        btnTest.setOnClickListener(new View.OnClickListener() {
+        btnTestVid1 = findViewById(R.id.new_lc_btn_test_1);
+        btnTestVid1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                testVideoLink = "http://202.80.222.170/000001/2/ch14061215034900095272/index.m3u8?virtualDomain=000001.live_hls.zte.com";
                 //startActivity(new Intent(LayarCilikActivity.this, LayarGuedhiActivity.class));
                 //String msg = Integer.toString(mPlayerViewCilik.getControllerShowTimeoutMs()) ;
                 //Toast.makeText(LayarCilikActivity.this, msg, Toast.LENGTH_SHORT).show();
             }
         });
 
-        mPlayerViewCilik = findViewById(R.id.lc_player_view_cilik);
+        btnTestVid2 = findViewById(R.id.new_lc_btn_test_2);
+        btnTestVid2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testVideoLink = "http://119.82.224.75:1935/live/ahsantv/playlist.m3u8";
+            }
+        });
+
+        mPlayerViewCilik = findViewById(R.id.new_lc_player_view_cilik);
         //pbBuffer = findViewById(R.id.lc_pb_buffer);
     }
 
     private void njupukData() {
-        if (getIntent().hasExtra(StelKendoLayarTancep.KEY_VIDEO_URI)) {
-            videoLink = getIntent().getStringExtra(StelKendoLayarTancep.KEY_VIDEO_URI);
+        if (getIntent().hasExtra(ConfigPlayerKangji.KEY_VIDEO_URI)) {
+            videoLink = getIntent().getStringExtra(ConfigPlayerKangji.KEY_VIDEO_URI);
 
             Log.d("==LAPORAN==", "videoLink: " + videoLink);
 
@@ -151,9 +161,9 @@ public class LayarCilikActivity extends AppCompatActivity {
             URL url = new URL(link);
             //String baseUrl = url.getProtocol() + "://" + url.getHost();
             String baseUrl = url.getHost();
-            if (baseUrl.equals(StelKendoLayarTancep.YT_BASE_URL_1) ||
-                    baseUrl.equals(StelKendoLayarTancep.YT_BASE_URL_2) ||
-                    baseUrl.equals(StelKendoLayarTancep.YT_BASE_URL_3)) {
+            if (baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_1) ||
+                    baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_2) ||
+                    baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_3)) {
 
                 new YouTubeExtractor(this) {
                     @Override
@@ -167,6 +177,7 @@ public class LayarCilikActivity extends AppCompatActivity {
                             //urlLayarTancep = ytFiles.get(itag).getUrl();
                             //playVideo(ytFiles.get(itag).getUrl());
                             ExoKangji.getSharedInstance().persiapanExoPlayer(LayarCilikActivity.this, mPlayerViewCilik, ytFiles.get(itag).getUrl(), pbBuffer);
+                            //ExoKangji.getSharedInstance().playStream(ytFiles.get(itag).getUrl());
                             fullscreenVideoLink = ytFiles.get(itag).getUrl();
                             Log.d("== PLAY VIDEO ==", ytFiles.get(itag).getUrl());
                         }
@@ -176,7 +187,8 @@ public class LayarCilikActivity extends AppCompatActivity {
             } else {
                 // LANGSUNG VIDEO LINK, GAK PERLU EXTRACTOR
                 //playVideo(videoLink);
-                ExoKangji.getSharedInstance().persiapanExoPlayer(this, mPlayerViewCilik, videoLink, pbBuffer);
+                //ExoKangji.getSharedInstance().persiapanExoPlayer(this, mPlayerViewCilik, videoLink, pbBuffer);
+                ExoKangji.getSharedInstance().playStream(videoLink);
                 fullscreenVideoLink = videoLink;
                 Log.d("== PLAY VIDEO ==", videoLink);
             }
@@ -199,7 +211,7 @@ public class LayarCilikActivity extends AppCompatActivity {
                 else {
                     // lek kondisine gung full screen
                     Intent intentGuedhi = new Intent(LayarCilikActivity.this, LayarGedhiActivity.class);
-                    intentGuedhi.putExtra(StelKendoLayarTancep.KEY_VIDEO_URI, fullscreenVideoLink);
+                    intentGuedhi.putExtra(ConfigPlayerKangji.KEY_VIDEO_URI, fullscreenVideoLink);
                     startActivity(intentGuedhi);
                 }
             }

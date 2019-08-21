@@ -4,10 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -89,10 +87,10 @@ public class ExoKangji {
             // 1. Create a default TrackSelector
             LoadControl loadControl = new DefaultLoadControl(
                     new DefaultAllocator(true, 16),
-                    StelKendoLayarTancep.MIN_BUFFER_DURATION,
-                    StelKendoLayarTancep.MAX_BUFFER_DURATION,
-                    StelKendoLayarTancep.MIN_PLAYBACK_START_BUFFER,
-                    StelKendoLayarTancep.MIN_PLAYBACK_RESUME_BUFFER,
+                    ConfigPlayerKangji.MIN_BUFFER_DURATION,
+                    ConfigPlayerKangji.MAX_BUFFER_DURATION,
+                    ConfigPlayerKangji.MIN_PLAYBACK_START_BUFFER,
+                    ConfigPlayerKangji.MIN_PLAYBACK_RESUME_BUFFER,
                     -1,
                     true);
 
@@ -103,6 +101,7 @@ public class ExoKangji {
             mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector/*, loadControl*/);
 
             // 3 NGGAWE MEDIA SOURCE (create a media source)
+
             if (videoUriString == null) {
                 return;
             }
@@ -206,6 +205,7 @@ public class ExoKangji {
                     Log.i(TAG, "onSeekProcessed: ");
                 }
             });
+
         }
 
         mPlayer.clearVideoSurface();
@@ -392,7 +392,9 @@ public class ExoKangji {
     }
 */
     public void playStream(String urlToPlay) {
-
+        if (urlToPlay == null) {
+            return;
+        }
         uriString = urlToPlay;
         Uri mp4VideoUri = Uri.parse(uriString);
         MediaSource videoSource;

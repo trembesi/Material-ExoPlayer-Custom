@@ -27,7 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.blogspot.materialexoplayercustom.player.StelKendoLayarTancep;
+import com.blogspot.materialexoplayercustom.player.ConfigPlayerKangji;
 import com.blogspot.materialexoplayercustom.tls.MeksoTLS;
 import com.blogspot.materialexoplayercustom.uborampe.GVAlbumAdapter;
 import com.blogspot.materialexoplayercustom.uborampe.ModelAlbum;
@@ -96,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
         //Toast.makeText(this, TAG + " - " + "ON DESTROY", Toast.LENGTH_SHORT).show();
     }
 
+    private void notoMain() {
 
+    }
 
     private void notoAlbum() {
         stelKendo = new StelKendo(this);
@@ -128,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     //Toast.makeText(GamblangActivity.this, dataURL, Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(MainActivity.this, LayarGedhiActivity.class);
-                    intent.putExtra(StelKendoLayarTancep.KEY_VIDEO_URI, url);
+                    intent.putExtra(ConfigPlayerKangji.KEY_VIDEO_URI, url);
                     startActivity(intent);
                 }
             }
@@ -142,10 +144,10 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(MainActivity.this, modelAlbum.get_url(), Toast.LENGTH_SHORT).show();
                 //ndelokLayarTancep(modelAlbum.get_url());
                 Intent intent = new Intent(MainActivity.this, LayarCilikActivity.class);
-                intent.putExtra(StelKendoLayarTancep.KEY_VIDEO_URI, modelAlbum.get_url());
-                intent.putExtra(StelKendoLayarTancep.KEY_VIDEO_JUDUL, modelAlbum.get_judul());
-                intent.putExtra(StelKendoLayarTancep.KEY_VIDEO_DESKRIPSI, modelAlbum.get_deskripsi());
-                intent.putExtra(StelKendoLayarTancep.KEY_VIDEO_GAMBAR_FULL, modelAlbum.get_gambarfull());
+                intent.putExtra(ConfigPlayerKangji.KEY_VIDEO_URI, modelAlbum.get_url());
+                intent.putExtra(ConfigPlayerKangji.KEY_VIDEO_JUDUL, modelAlbum.get_judul());
+                intent.putExtra(ConfigPlayerKangji.KEY_VIDEO_DESKRIPSI, modelAlbum.get_deskripsi());
+                intent.putExtra(ConfigPlayerKangji.KEY_VIDEO_GAMBAR_FULL, modelAlbum.get_gambarfull());
                 startActivity(intent);
 
             }

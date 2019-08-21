@@ -1,6 +1,6 @@
 package com.blogspot.materialexoplayercustom.player;
 
-public class StelKendoLayarTancep {
+public class ConfigPlayerKangji {
     public static final String KEY_VIDEO_URI = "key_video_uri";
     public static final String KEY_VIDEO_JUDUL = "key_video_judul";
     public static final String KEY_VIDEO_DESKRIPSI = "key_video_deskripsi";

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LayarCilikActivity">
+    tools:context=".NewLayarCilikActivity">
+
 
     <RelativeLayout
         android:id="@+id/new_lc_layout_player"
@@ -29,11 +30,12 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/new_lc_layout_panel_bawah"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/new_lc_layout_player">
+        android:layout_below="@id/new_lc_layout_player"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/new_lc_tv_teks"
@@ -46,15 +48,31 @@
             android:id="@+id/new_lc_btn_test_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/new_lc_tv_teks"
-            android:text="Test Video 1" />
+            android:text="Test 1" />
 
         <Button
             android:id="@+id/new_lc_btn_test_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/new_lc_btn_test_1"
-            android:text="Test Video 2" />
-    </RelativeLayout>
+            android:text="Test 2" />
+
+        <Button
+            android:id="@+id/new_lc_btn_test_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test 3" />
+
+        <Button
+            android:id="@+id/new_lc_btn_test_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test 4" />
+
+        <Button
+            android:id="@+id/new_lc_btn_test_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test 5" />
+    </LinearLayout>
 
 </RelativeLayout>
