@@ -150,55 +150,16 @@ public class ExoKangjiNew {
             playerListener(progressBarBuffering);
 
             // play intro video
-            Uri uriIntro = Uri.parse("asset:///intro.MP4");
-            playLocalContent(uriIntro);
-            //playStreamingContent("http://202.80.222.175/000001/2/ch00000090990000001731/index.m3u8?virtualDomain=000001.live_hls.zte.com");
-
-            /*
-            //=========== PLAY TEKO LOKAL PIDIO DIGAWE INTRO ===========
-            DataSpec dataSpec = new DataSpec(Uri.parse("asset:///intro.MP4"));
-            final AssetDataSource assetDataSource = new AssetDataSource(mContext);
-            try {
-                assetDataSource.open(dataSpec);
-            }
-            catch (AssetDataSource.AssetDataSourceException e) {
-                e.printStackTrace();
-            }
-
-            DataSource.Factory factory = new DataSource.Factory() {
-                @Override
-                public DataSource createDataSource() {
-                    //return null;
-                    return assetDataSource;
-                }
-            };
-
-            MediaSource mediaSourceIntro = new ExtractorMediaSource(
-                    assetDataSource.getUri(),
-                    factory,
-                    new DefaultExtractorsFactory(),
-                    null,
-                    null
-            );
-            //===================================================================
-
-            mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector, loadControl);
-            mPlayerView.setPlayer(mPlayer);
-
-            //MediaSource mediaSource = buildMediaSource(Uri.parse(mC));
-            mPlayer.clearVideoSurface();
-            mPlayer.setVideoTextureView((TextureView) mPlayerView.getVideoSurfaceView());
-            mPlayer.seekTo(mPlayer.getCurrentPosition() + 1);
-            //mPlayer.prepare(mediaSource);
-            mPlayer.prepare(mediaSourceIntro);
+            //Uri uriIntro = Uri.parse("asset:///intro.MP4");
+            //playLocalContent(uriIntro);
+            playStreamingContent(ConfigPlayerKangji.INTRO);
             mPlayer.setPlayWhenReady(true);
-            playerListener(progressBarBuffering);
-            */
+
         }
 
     }
 
-    public MediaSource buildMediaSource(/*Uri uri*/ String inputVideoString) {
+    public MediaSource buildMediaSource(String inputVideoString) {
         /*
         // these are reused for both media sources we create below
         //DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
@@ -246,7 +207,6 @@ public class ExoKangjiNew {
 
         mUri = Uri.parse(inputVideoString);
 
-        //if (uri.getLastPathSegment().toUpperCase().contains("MP3") || uri.getLastPathSegment().toUpperCase().contains("MP4")) {
         if (inputVideoString.toUpperCase().contains("MP3") || inputVideoString.toUpperCase().contains("MP4")) {
             return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
             //return mediaSource;
@@ -263,15 +223,12 @@ public class ExoKangjiNew {
     public void playStreamingContent(String stringContentLink) {
         mPlayer.stop();
         mPlayer.seekTo(0L);
-
-        //MediaSource mediaSource = buildMediaSource(Uri.parse(uriString));
         MediaSource mediaSource = buildMediaSource(stringContentLink);
         mPlayer.clearVideoSurface();
         mPlayer.setVideoTextureView((TextureView) mPlayerView.getVideoSurfaceView());
         mPlayer.seekTo(mPlayer.getCurrentPosition() + 1);
         mPlayer.prepare(mediaSource);
     }
-
 
     public void playLocalContent(Uri uriLocalContent) {
         DataSpec dataSpec = new DataSpec(uriLocalContent);
@@ -305,6 +262,39 @@ public class ExoKangjiNew {
         //mPlayer.prepare(mediaSource);
         mPlayer.prepare(mediaSource);
         mPlayer.setPlayWhenReady(true);
+    }
+
+    public void checkLinkAndPlayStreaming(String inputLink) {
+
+        try {
+            URL url = new URL(inputLink);
+            //String baseUrl = url.getProtocol() + "://" + url.getHost();
+            String baseUrl = url.getHost();
+            if (baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_1) ||
+                    baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_2) ||
+                    baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_3)) {
+
+                new YouTubeExtractor(mContext) {
+                    @Override
+                    public void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta vMeta) {
+                        if (ytFiles != null) {
+                            int itag = 22;
+                            //ExoKangji.getSharedInstance().persiapanExoPlayer(LayarCilikActivity.this, mPlayerViewCilik, ytFiles.get(itag).getUrl(), pbBuffer);
+                            //fullscreenVideoLink = ytFiles.get(itag).getUrl();
+                            playStreamingContent(ytFiles.get(itag).getUrl());
+                        }
+                    }
+                }.extract(inputLink, true, true);
+
+            } else {
+                // LANGSUNG VIDEO LINK, GAK PERLU EXTRACTOR
+                //ExoKangji.getSharedInstance().playStream(videoLink);
+                playStreamingContent(inputLink);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            Log.e(TAG,"(=EXTRAK MANGGIS=) " + e.toString());
+        }
     }
 
     public void playerListener(ProgressBar progressBarBuffering) {

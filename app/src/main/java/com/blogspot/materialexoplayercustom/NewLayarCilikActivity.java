@@ -102,9 +102,8 @@ public class NewLayarCilikActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 inputSource = "http://202.80.222.170/000001/2/ch14061215034900095272/index.m3u8?virtualDomain=000001.live_hls.zte.com";
-                //ExoKangjiNew.getSharedInstance(NewLayarCilikActivity.this).playStreamingContent(inputSource);
-                //ExoKangji.getSharedInstance().persiapanExoPlayer(NewLayarCilikActivity.this, mPlayerView, inputSource, progressBar);
-                ekstrakManggis(inputSource);
+                ExoKangjiNew.getSharedInstance(NewLayarCilikActivity.this).checkLinkAndPlayStreaming(inputSource);
+                //ekstrakManggis(inputSource);
             }
         });
 
@@ -114,9 +113,8 @@ public class NewLayarCilikActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 inputSource = "http://119.82.224.75:1935/live/ahsantv/playlist.m3u8";
-                //ExoKangjiNew.getSharedInstance(NewLayarCilikActivity.this).playStreamingContent(inputSource);
-                //ExoKangji.getSharedInstance().persiapanExoPlayer(NewLayarCilikActivity.this, mPlayerView, inputSource, progressBar);
-                ekstrakManggis(inputSource);
+                ExoKangjiNew.getSharedInstance(NewLayarCilikActivity.this).checkLinkAndPlayStreaming(inputSource);
+                //ekstrakManggis(inputSource);
             }
         });
 
@@ -126,9 +124,8 @@ public class NewLayarCilikActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 inputSource = "https://www.youtube.com/watch?v=SXIGXSrwygU";
-                //ExoKangjiNew.getSharedInstance(NewLayarCilikActivity.this).playStreamingContent(inputSource);
-                //ExoKangji.getSharedInstance().persiapanExoPlayer(NewLayarCilikActivity.this, mPlayerView, inputSource, progressBar);
-                ekstrakManggis(inputSource);
+                ExoKangjiNew.getSharedInstance(NewLayarCilikActivity.this).checkLinkAndPlayStreaming(inputSource);
+                //ekstrakManggis(inputSource);
             }
         });
 
@@ -138,9 +135,8 @@ public class NewLayarCilikActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 inputSource = "https://www.youtube.com/watch?v=uykAHRDaZH8&t";
-                //ExoKangjiNew.getSharedInstance(NewLayarCilikActivity.this).playStreamingContent(inputSource);
-                //ExoKangji.getSharedInstance().persiapanExoPlayer(NewLayarCilikActivity.this, mPlayerView, inputSource, progressBar);
-                ekstrakManggis(inputSource);
+                ExoKangjiNew.getSharedInstance(NewLayarCilikActivity.this).checkLinkAndPlayStreaming(inputSource);
+                //ekstrakManggis(inputSource);
             }
         });
 
@@ -150,15 +146,14 @@ public class NewLayarCilikActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 inputSource = "https://ia800501.us.archive.org/34/items/BurdahEnsemblePearlsAndCoral/Burdah%20Ensemble%20-%20Pearls%20and%20Coral%20%E2%80%93%2013.%20Al%20Madad%20Ya%20Rasul%20Allah.mp3";
-                //ExoKangjiNew.getSharedInstance(NewLayarCilikActivity.this).playStreamingContent(inputSource);
-                //ExoKangji.getSharedInstance().persiapanExoPlayer(NewLayarCilikActivity.this, mPlayerView, inputSource, progressBar);
-                ekstrakManggis(inputSource);
+                ExoKangjiNew.getSharedInstance(NewLayarCilikActivity.this).checkLinkAndPlayStreaming(inputSource);
+                //ekstrakManggis(inputSource);
             }
         });
 
         ExoKangjiNew.getSharedInstance(NewLayarCilikActivity.this).initializePlayer(mPlayerView, progressBar);
     }
-
+/*
     private void ekstrakManggis(String link) {
         try {
             URL url = new URL(link);
@@ -195,5 +190,5 @@ public class NewLayarCilikActivity extends AppCompatActivity {
             Log.e("==EXTRAK MANGGIS==", e.toString());
         }
     }
-
+*/
 }

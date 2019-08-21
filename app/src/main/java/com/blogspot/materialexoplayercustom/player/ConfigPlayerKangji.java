@@ -6,6 +6,7 @@ public class ConfigPlayerKangji {
     public static final String KEY_VIDEO_DESKRIPSI = "key_video_deskripsi";
     public static final String KEY_VIDEO_GAMBAR_FULL = "key_video_gambar_full";
 
+    public static final String INTRO = "https://trembesi.github.io/loker/apps/android/sasi_player/files/video/intro.MP4";
     public static final String YT_BASE_URL_1 = "www.youtube.com";
     public static final String YT_BASE_URL_2 = "m.youtube.com";
     public static final String YT_BASE_URL_3 = "youtube.com";
