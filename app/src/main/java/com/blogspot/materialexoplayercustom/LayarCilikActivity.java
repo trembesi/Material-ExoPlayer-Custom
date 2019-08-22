@@ -14,8 +14,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.blogspot.materialexoplayercustom.player.ExoKangji;
 import com.blogspot.materialexoplayercustom.player.ConfigPlayerKangji;
+import com.blogspot.materialexoplayercustom.player.ExoKangji;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 
@@ -37,7 +37,7 @@ public class LayarCilikActivity extends AppCompatActivity {
     private String fullscreenVideoLink;
     private ProgressBar pbBuffer;
 
-    private Button btnTestVid1, btnTestVid2;
+    private Button btnTestVid1, btnTestVid2, btnTestVid3, btnTestVid4, btnTestVid5;
     private String testVideoLink;
 
     @Override
@@ -66,7 +66,7 @@ public class LayarCilikActivity extends AppCompatActivity {
         //priksoData();
         //ExoKangji.getSharedInstance().exoPlayerListener();
 
-        pbBuffer = findViewById(R.id.new_lc_pb_buffer);
+        pbBuffer = findViewById(R.id.lc_pb_buffer);
 
         if (videoLink != null && mPlayerViewCilik != null) {
             //ExoKangji.getSharedInstance().persiapanExoPlayer(getActivity(), mPlayerViewCilik, videoLink);
@@ -116,26 +116,52 @@ public class LayarCilikActivity extends AppCompatActivity {
    */
     private void notoLayarCilik() {
         getSupportActionBar().setTitle("Layar Tancep Activity");
-        btnTestVid1 = findViewById(R.id.new_lc_btn_test_1);
+        btnTestVid1 = findViewById(R.id.lc_btn_test_1);
         btnTestVid1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 testVideoLink = "http://202.80.222.170/000001/2/ch14061215034900095272/index.m3u8?virtualDomain=000001.live_hls.zte.com";
-                //startActivity(new Intent(LayarCilikActivity.this, LayarGuedhiActivity.class));
-                //String msg = Integer.toString(mPlayerViewCilik.getControllerShowTimeoutMs()) ;
-                //Toast.makeText(LayarCilikActivity.this, msg, Toast.LENGTH_SHORT).show();
+                ExoKangji.getSharedInstance().changeAndPlayStreaming(testVideoLink);
             }
         });
 
-        btnTestVid2 = findViewById(R.id.new_lc_btn_test_2);
+        btnTestVid2 = findViewById(R.id.lc_btn_test_2);
         btnTestVid2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 testVideoLink = "http://119.82.224.75:1935/live/ahsantv/playlist.m3u8";
+                ExoKangji.getSharedInstance().changeAndPlayStreaming(testVideoLink);
             }
         });
 
-        mPlayerViewCilik = findViewById(R.id.new_lc_player_view_cilik);
+        btnTestVid3 = findViewById(R.id.lc_btn_test_3);
+        btnTestVid3.setText("Test YT 1");
+        btnTestVid3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testVideoLink = "https://www.youtube.com/watch?v=SXIGXSrwygU";
+            }
+        });
+
+        btnTestVid4 = findViewById(R.id.lc_btn_test_4);
+        btnTestVid4.setText("Test YT 2");
+        btnTestVid4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testVideoLink = "https://www.youtube.com/watch?v=uykAHRDaZH8&t";
+            }
+        });
+
+        btnTestVid5 = findViewById(R.id.lc_btn_test_5);
+        btnTestVid5.setText("Test Audio MP3");
+        btnTestVid5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testVideoLink = "https://ia800501.us.archive.org/34/items/BurdahEnsemblePearlsAndCoral/Burdah%20Ensemble%20-%20Pearls%20and%20Coral%20%E2%80%93%2013.%20Al%20Madad%20Ya%20Rasul%20Allah.mp3";
+            }
+        });
+
+        mPlayerViewCilik = findViewById(R.id.lc_player_view_cilik);
         //pbBuffer = findViewById(R.id.lc_pb_buffer);
     }
 

@@ -4,13 +4,16 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 
+//import com.blogspot.materialexoplayercustom.R;
 import com.blogspot.materialexoplayercustom.R;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -75,6 +78,10 @@ public class ExoKangji {
 
         this.mContext = mContext;
         this.mPlayerView = mPlayerView;
+        /*
+        MeksoTLS meksoTLS = new MeksoTLS(mContext);
+        meksoTLS.peksoTLSv12();
+        */
 
         if (mContext == null || mPlayerView == null) {
             return;
@@ -101,7 +108,6 @@ public class ExoKangji {
             mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector/*, loadControl*/);
 
             // 3 NGGAWE MEDIA SOURCE (create a media source)
-
             if (videoUriString == null) {
                 return;
             }
@@ -205,7 +211,6 @@ public class ExoKangji {
                     Log.i(TAG, "onSeekProcessed: ");
                 }
             });
-
         }
 
         mPlayer.clearVideoSurface();
@@ -217,6 +222,36 @@ public class ExoKangji {
         mPlayerView.setPlayer(mPlayer);
     }
 
+    public void changeAndPlayStreaming(String linkStreaming) {
+        mPlayer.stop();
+        mPlayer.seekTo(0L);
+        mPlayer.clearVideoSurface();
+        mPlayer.setVideoTextureView((TextureView) mPlayerView.getVideoSurfaceView());
+
+        // 3 NGGAWE MEDIA SOURCE (create a media source)
+        if (linkStreaming == null) {
+            return;
+        }
+        mUri = Uri.parse(linkStreaming);
+        // Produces DataSource instances through which media data is loaded.
+        dataSourceFactory = new DefaultDataSourceFactory(mContext, Util.getUserAgent(mContext, mContext.getString(R.string.app_name)), BANDWIDTH_METER);
+        // This is the MediaSource representing the media to be played.
+        MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(mUri);
+
+        //== OPO IKI YAAA ====
+        String filenameArray[] = linkStreaming.split("\\.");
+        if (linkStreaming.toUpperCase().contains("M3U8")) {
+            //videoSource = new HlsMediaSource(mUri, dataSourceFactory, null, null);
+            videoSource = new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(mUri);
+        }
+        else {
+            videoSource = new ExtractorMediaSource(mUri, dataSourceFactory, new DefaultExtractorsFactory(), null, null);
+        }
+
+        // Prepare the player with the source.
+        mPlayer.prepare(videoSource);
+    }
+/*
     public void exoPlayerListener() {
 
         mPlayer.addListener(new Player.EventListener() {
@@ -293,7 +328,7 @@ public class ExoKangji {
             }
         });
     }
-
+*/
     public void releasePlayer() {
         if (mPlayer != null) {
             mPlayer.release();
@@ -392,9 +427,7 @@ public class ExoKangji {
     }
 */
     public void playStream(String urlToPlay) {
-        if (urlToPlay == null) {
-            return;
-        }
+
         uriString = urlToPlay;
         Uri mp4VideoUri = Uri.parse(uriString);
         MediaSource videoSource;

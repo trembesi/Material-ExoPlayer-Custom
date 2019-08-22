@@ -147,13 +147,14 @@ public class ExoKangjiNew {
             mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, renderersFactory, trackSelector, loadControl);
 
             mPlayerView.setPlayer(mPlayer);
+            progressBarBuffering.setVisibility(View.GONE);
             playerListener(progressBarBuffering);
 
             // play intro video
             //Uri uriIntro = Uri.parse("asset:///intro.MP4");
             //playLocalContent(uriIntro);
-            playStreamingContent(ConfigPlayerKangji.INTRO);
-            mPlayer.setPlayWhenReady(true);
+            //playStreamingContent(ConfigPlayerKangji.INTRO);
+            //mPlayer.setPlayWhenReady(true);
 
         }
 
@@ -221,13 +222,25 @@ public class ExoKangjiNew {
     }
 
     public void playStreamingContent(String stringContentLink) {
-        mPlayer.stop();
-        mPlayer.seekTo(0L);
+        //mPlayer.stop();
+        //mPlayer.seekTo(0L);
         MediaSource mediaSource = buildMediaSource(stringContentLink);
         mPlayer.clearVideoSurface();
         mPlayer.setVideoTextureView((TextureView) mPlayerView.getVideoSurfaceView());
         mPlayer.seekTo(mPlayer.getCurrentPosition() + 1);
         mPlayer.prepare(mediaSource);
+        mPlayer.setPlayWhenReady(true);
+    }
+
+    public void changeAndPlayStreamingContent(String stringContentLink) {
+        mPlayer.stop();
+        mPlayer.seekTo(0L);
+        MediaSource mediaSource = buildMediaSource(stringContentLink);
+        mPlayer.clearVideoSurface();
+        mPlayer.setVideoTextureView((TextureView) mPlayerView.getVideoSurfaceView());
+        //mPlayer.seekTo(mPlayer.getCurrentPosition() + 1);
+        mPlayer.prepare(mediaSource);
+        mPlayer.setPlayWhenReady(true);
     }
 
     public void playLocalContent(Uri uriLocalContent) {
@@ -263,7 +276,7 @@ public class ExoKangjiNew {
         mPlayer.prepare(mediaSource);
         mPlayer.setPlayWhenReady(true);
     }
-
+/*
     public void checkLinkAndPlayStreaming(String inputLink) {
 
         try {
@@ -296,7 +309,7 @@ public class ExoKangjiNew {
             Log.e(TAG,"(=EXTRAK MANGGIS=) " + e.toString());
         }
     }
-
+*/
     public void playerListener(ProgressBar progressBarBuffering) {
 
         mPlayer.addListener(new Player.EventListener() {
