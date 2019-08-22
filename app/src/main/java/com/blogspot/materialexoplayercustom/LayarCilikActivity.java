@@ -30,15 +30,15 @@ public class LayarCilikActivity extends AppCompatActivity {
 
     private String TAG = "=== " + LayarCilikActivity.class.getSimpleName() + " ===";
     private PlayerView mPlayerViewCilik;
-    private String videoLink;
+    //private String videoLink;
     private ImageView ivFullscreen;
     private FrameLayout btnFrameFullscreen;
     private boolean isFullScreen;
-    private String fullscreenVideoLink;
+    //private String fullscreenVideoLink;
     private ProgressBar pbBuffer;
 
     private Button btnTestVid1, btnTestVid2, btnTestVid3, btnTestVid4, btnTestVid5;
-    private String testVideoLink;
+    private String inputSource, outputSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +68,9 @@ public class LayarCilikActivity extends AppCompatActivity {
 
         pbBuffer = findViewById(R.id.lc_pb_buffer);
 
-        if (videoLink != null && mPlayerViewCilik != null) {
+        if (inputSource != null && mPlayerViewCilik != null) {
             //ExoKangji.getSharedInstance().persiapanExoPlayer(getActivity(), mPlayerViewCilik, videoLink);
-            ekstrakManggis(videoLink);
+            ekstrakManggis(inputSource);
             ExoKangji.getSharedInstance().goToForeground();
             isFullScreen = false;
             initFullscreenButton();
@@ -120,8 +120,8 @@ public class LayarCilikActivity extends AppCompatActivity {
         btnTestVid1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                testVideoLink = "http://202.80.222.170/000001/2/ch14061215034900095272/index.m3u8?virtualDomain=000001.live_hls.zte.com";
-                ExoKangji.getSharedInstance().changeAndPlayStreaming(testVideoLink);
+                inputSource = "http://202.80.222.170/000001/2/ch14061215034900095272/index.m3u8?virtualDomain=000001.live_hls.zte.com";
+                ExoKangji.getSharedInstance().changeAndPlayStreaming(inputSource);
             }
         });
 
@@ -129,8 +129,8 @@ public class LayarCilikActivity extends AppCompatActivity {
         btnTestVid2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                testVideoLink = "http://119.82.224.75:1935/live/ahsantv/playlist.m3u8";
-                ExoKangji.getSharedInstance().changeAndPlayStreaming(testVideoLink);
+                inputSource = "http://119.82.224.75:1935/live/ahsantv/playlist.m3u8";
+                ExoKangji.getSharedInstance().changeAndPlayStreaming(inputSource);
             }
         });
 
@@ -139,7 +139,7 @@ public class LayarCilikActivity extends AppCompatActivity {
         btnTestVid3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                testVideoLink = "https://www.youtube.com/watch?v=SXIGXSrwygU";
+                inputSource = "https://www.youtube.com/watch?v=SXIGXSrwygU";
             }
         });
 
@@ -148,7 +148,7 @@ public class LayarCilikActivity extends AppCompatActivity {
         btnTestVid4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                testVideoLink = "https://www.youtube.com/watch?v=uykAHRDaZH8&t";
+                inputSource = "https://www.youtube.com/watch?v=uykAHRDaZH8&t";
             }
         });
 
@@ -157,7 +157,7 @@ public class LayarCilikActivity extends AppCompatActivity {
         btnTestVid5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                testVideoLink = "https://ia800501.us.archive.org/34/items/BurdahEnsemblePearlsAndCoral/Burdah%20Ensemble%20-%20Pearls%20and%20Coral%20%E2%80%93%2013.%20Al%20Madad%20Ya%20Rasul%20Allah.mp3";
+                inputSource = "https://ia800501.us.archive.org/34/items/BurdahEnsemblePearlsAndCoral/Burdah%20Ensemble%20-%20Pearls%20and%20Coral%20%E2%80%93%2013.%20Al%20Madad%20Ya%20Rasul%20Allah.mp3";
             }
         });
 
@@ -167,15 +167,15 @@ public class LayarCilikActivity extends AppCompatActivity {
 
     private void njupukData() {
         if (getIntent().hasExtra(ConfigPlayerKangji.KEY_VIDEO_URI)) {
-            videoLink = getIntent().getStringExtra(ConfigPlayerKangji.KEY_VIDEO_URI);
+            inputSource = getIntent().getStringExtra(ConfigPlayerKangji.KEY_VIDEO_URI);
 
-            Log.d("==LAPORAN==", "videoLink: " + videoLink);
+            Log.d("==LAPORAN==", "videoLink: " + inputSource);
 
-            if (videoLink.equals(null)) {
+            if (inputSource.equals(null)) {
                 Log.d("==PIDIO LINK==", "NULL.....");
 
             } else {
-                ekstrakManggis(videoLink);
+                ekstrakManggis(inputSource);
                 Log.d("==LAPORAN==", "OK PLAY...");
             }
 
@@ -204,19 +204,19 @@ public class LayarCilikActivity extends AppCompatActivity {
                             //playVideo(ytFiles.get(itag).getUrl());
                             ExoKangji.getSharedInstance().persiapanExoPlayer(LayarCilikActivity.this, mPlayerViewCilik, ytFiles.get(itag).getUrl(), pbBuffer);
                             //ExoKangji.getSharedInstance().playStream(ytFiles.get(itag).getUrl());
-                            fullscreenVideoLink = ytFiles.get(itag).getUrl();
+                            outputSource = ytFiles.get(itag).getUrl();
                             Log.d("== PLAY VIDEO ==", ytFiles.get(itag).getUrl());
                         }
                     }
-                }.extract(videoLink, true, true);
+                }.extract(inputSource, true, true);
 
             } else {
                 // LANGSUNG VIDEO LINK, GAK PERLU EXTRACTOR
                 //playVideo(videoLink);
                 //ExoKangji.getSharedInstance().persiapanExoPlayer(this, mPlayerViewCilik, videoLink, pbBuffer);
-                ExoKangji.getSharedInstance().playStream(videoLink);
-                fullscreenVideoLink = videoLink;
-                Log.d("== PLAY VIDEO ==", videoLink);
+                ExoKangji.getSharedInstance().playStream(inputSource);
+                outputSource = inputSource;
+                Log.d("== PLAY VIDEO ==", inputSource);
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -237,7 +237,7 @@ public class LayarCilikActivity extends AppCompatActivity {
                 else {
                     // lek kondisine gung full screen
                     Intent intentGuedhi = new Intent(LayarCilikActivity.this, LayarGedhiActivity.class);
-                    intentGuedhi.putExtra(ConfigPlayerKangji.KEY_VIDEO_URI, fullscreenVideoLink);
+                    intentGuedhi.putExtra(ConfigPlayerKangji.KEY_VIDEO_URI, outputSource);
                     startActivity(intentGuedhi);
                 }
             }
