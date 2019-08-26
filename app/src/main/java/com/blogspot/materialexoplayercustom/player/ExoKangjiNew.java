@@ -1,24 +1,15 @@
 package com.blogspot.materialexoplayercustom.player;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
-import android.util.SparseArray;
-import android.view.Gravity;
-import android.view.TextureView;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-
-import com.blogspot.materialexoplayercustom.LayarCilikActivity;
-import com.blogspot.materialexoplayercustom.R;
-import com.blogspot.materialexoplayercustom.tls.MeksoTLS;
 import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
@@ -39,24 +30,15 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.AssetDataSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-
-import at.huber.youtubeExtractor.VideoMeta;
-import at.huber.youtubeExtractor.YouTubeExtractor;
-import at.huber.youtubeExtractor.YtFile;
 
 public class ExoKangjiNew {
     /**
@@ -66,27 +48,288 @@ public class ExoKangjiNew {
     private static final String TAG = "=== " + ExoKangjiNew.class.getSimpleName() + " ===";
 
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
-    private DataSource.Factory dataSourceFactory;
     private static ExoKangjiNew mInstance = null;
     private SimpleExoPlayer mPlayer;
-    private boolean isPlayerPlaying;
     private Uri mUri;
-    CallBacks.playerCallBack listner;
     ArrayList<String> mPlayList = null;
     Integer playlistIndex = 0;
-    //String uriString = "";
 
     PlayerView mPlayerView;
     private String userAgent = "ExoKangji";
     private Context mContext;
-
     private TextView tvError;
-    private String outputLink;
 
-    /**
-     * private constructor
-     * @param mContext
-     */
+    public static ExoKangjiNew getSharedInstance() {
+        if (mInstance == null) {
+            mInstance = new ExoKangjiNew();
+        }
+        return mInstance;
+    }
+
+    public void initializePlayer(Context mContext, PlayerView mPlayerView, @Nullable ProgressBar progressBar) {
+        this.mContext = mContext;
+        this.mPlayerView = mPlayerView;
+
+        if (mContext == null || mPlayerView == null) {
+            return;
+        }
+        /*
+        if (mPlayerView != null) {
+            tvError = new TextView(mContext);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+            tvError.setLayoutParams(params);
+            tvError.setGravity(Gravity.CENTER);
+            tvError.setText("HAHAHAHAHAH");
+            tvError.setTextColor(Color.parseColor("#FFFFFF"));
+            mPlayerView.addView(tvError);
+        }
+         */
+
+        if (mPlayer == null) {
+            // Create a new player if the player is null or
+            // we want to play a new video
+            // Do all the standard ExoPlayer code here...
+
+            LoadControl loadControl = new DefaultLoadControl(
+                    new DefaultAllocator(true, 16),
+                    ConfigPlayerKangji.MIN_BUFFER_DURATION,
+                    ConfigPlayerKangji.MAX_BUFFER_DURATION,
+                    ConfigPlayerKangji.MIN_PLAYBACK_START_BUFFER,
+                    ConfigPlayerKangji.MIN_PLAYBACK_RESUME_BUFFER,
+                    -1,
+                    true
+            );
+
+            TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
+            TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+
+            mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector, loadControl);
+            mPlayerView.setPlayer(mPlayer);
+        }
+
+    }
+
+    public MediaSource buildMediaSource(String inputVideoString) {
+        // these are reused for both media sources we create below
+        //DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        DefaultHttpDataSourceFactory defaultHttpDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent);
+        DefaultDashChunkSource.Factory dashChunkSourceFactory = new DefaultDashChunkSource.Factory(new DefaultHttpDataSourceFactory(userAgent, BANDWIDTH_METER));
+        DefaultHttpDataSourceFactory manifestDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent);
+
+        mUri = Uri.parse(inputVideoString);
+
+        if (inputVideoString.toUpperCase().contains("MP3") || inputVideoString.toUpperCase().contains("MP4")) {
+            return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+        }
+        else if (inputVideoString.toUpperCase().contains("M3U8")) {
+            return new HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+        }
+        else {
+            return new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(mUri);
+        }
+    }
+
+    public void switchScreen(PlayerView oldPlayerView, PlayerView newPlayerView) {
+        PlayerView.switchTargetView(mPlayer, oldPlayerView, newPlayerView);
+    }
+
+    public void playStreamingContent(String inputSource) {
+        mPlayer.stop();
+        MediaSource mediaSource = buildMediaSource(inputSource);
+        mPlayer.clearVideoSurface();
+        mPlayer.setVideoSurfaceView((SurfaceView) mPlayerView.getVideoSurfaceView());
+        mPlayer.seekTo(mPlayer.getCurrentPosition() + 1);
+        mPlayer.prepare(mediaSource, true, false);
+        mPlayer.setPlayWhenReady(true);
+    }
+
+    public void playLocalContent(Uri uriLocalContent) {
+
+        mPlayer.stop();
+
+        DataSpec dataSpec = new DataSpec(uriLocalContent);
+        final AssetDataSource assetDataSource = new AssetDataSource(mContext);
+
+        try {
+            assetDataSource.open(dataSpec);
+        }
+        catch (AssetDataSource.AssetDataSourceException e) {
+            e.printStackTrace();
+        }
+
+        DataSource.Factory factory = new DataSource.Factory() {
+            @Override
+            public DataSource createDataSource() {
+                //return null;
+                return assetDataSource;
+            }
+        };
+
+        MediaSource mediaSource = new ExtractorMediaSource(
+                assetDataSource.getUri(),
+                factory,
+                new DefaultExtractorsFactory(),
+                null,
+                null
+        );
+
+        mPlayer.clearVideoSurface();
+        mPlayer.setVideoSurfaceView((SurfaceView) mPlayerView.getVideoSurfaceView());
+        mPlayer.seekTo(mPlayer.getCurrentPosition() + 1);
+        mPlayer.prepare(mediaSource);
+        mPlayer.setPlayWhenReady(true);
+    }
+
+    private void playerListener(ProgressBar progressBarBuffering) {
+
+        mPlayer.addListener(new Player.EventListener() {
+            @Override
+            public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
+                Log.i(TAG, "onTimelineChanged: ");
+            }
+
+            @Override
+            public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+                Log.i(TAG, "onTracksChanged: ");
+            }
+
+            @Override
+            public void onLoadingChanged(boolean isLoading) {
+                Log.i(TAG, "onLoadingChanged: ");
+            }
+
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                switch (playbackState) {
+                    case Player.STATE_BUFFERING:
+                        Log.d(TAG, "(= STATUS PLAYBACK =) - Buffering...");
+                        tvError.setVisibility(View.GONE);
+                        if (progressBarBuffering != null) {
+                            progressBarBuffering.setVisibility(View.VISIBLE);
+                        }
+                        break;
+                    case Player.STATE_ENDED:
+                        Log.d(TAG, "(= STATUS PLAYBACK =) - Ended...");
+                        tvError.setVisibility(View.GONE);
+                        // Activate the force enable
+                        if (progressBarBuffering != null) {
+                            progressBarBuffering.setVisibility(View.GONE);}
+                        break;
+                    case Player.STATE_IDLE:
+                        Log.d(TAG, "(= STATUS PLAYBACK =) - Idle...");
+                        //tvError.setVisibility(View.GONE);
+                        break;
+                    case Player.STATE_READY:
+                        Log.d(TAG, "(= STATUS PLAYBACK =) - Ready...");
+                        tvError.setVisibility(View.GONE);
+                        //dialogBuffer.cancel();
+                        if (progressBarBuffering != null) {
+                            progressBarBuffering.setVisibility(View.GONE);}
+                        break;
+                    default:
+                        // status = PlaybackStatus.IDLE;
+                        break;
+                }
+            }
+
+            @Override
+            public void onRepeatModeChanged(int repeatMode) {
+                Log.i(TAG, "onRepeatModeChanged: ");
+            }
+
+            @Override
+            public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+                Log.i(TAG, "onShuffleModeEnabledChanged: ");
+            }
+
+            @Override
+            public void onPlayerError(ExoPlaybackException error) {
+                Log.i(TAG, "onPlayerError: ");
+                progressBarBuffering.setVisibility(View.GONE);
+                tvError.setVisibility(View.VISIBLE);
+
+                switch (error.type) {
+                    case ExoPlaybackException.TYPE_SOURCE:
+                        //tvError.setText("TYPE_SOURCE: " + error.getSourceException().getMessage());
+                        tvError.setText("Error: TYPE_SOURCE");
+                        //tvError.setVisibility(View.VISIBLE);
+                        Log.e(TAG, "TYPE_SOURCE: " + error.getSourceException().getMessage());
+                        break;
+
+                    case ExoPlaybackException.TYPE_RENDERER:
+                        //tvError.setText("TYPE_RENDERER: " + error.getRendererException().getMessage());
+                        tvError.setText("Error: TYPE_RENDERER");
+                        //tvError.setVisibility(View.VISIBLE);
+                        Log.e(TAG, "TYPE_RENDERER: " + error.getRendererException().getMessage());
+                        break;
+
+                    case ExoPlaybackException.TYPE_UNEXPECTED:
+                        //tvError.setText("TYPE_UNEXPECTED: " + error.getUnexpectedException().getMessage());
+                        tvError.setText("Error: TYPE_UNEXPECTED");
+                        //tvError.setVisibility(View.VISIBLE);
+                        Log.e(TAG, "TYPE_UNEXPECTED: " + error.getUnexpectedException().getMessage());
+                        break;
+                }
+            }
+
+            @Override
+            public void onPositionDiscontinuity(int reason) {
+                Log.i(TAG, "onPositionDiscontinuity: ");
+            }
+
+            @Override
+            public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+                Log.i(TAG, "onPlaybackParametersChanged: ");
+            }
+
+            @Override
+            public void onSeekProcessed() {
+                Log.i(TAG, "onSeekProcessed: ");
+            }
+        });
+    }
+
+    public void releasePlayer() {
+        if (mPlayer != null) {
+            mPlayer.release();
+        }
+        mPlayer = null;
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+
+ /**
+ /* private constructor
+ /* @param mContext
+ /*
     private ExoKangjiNew(Context mContext) {
         this.mContext = mContext;
     }
@@ -143,8 +386,8 @@ public class ExoKangjiNew {
             DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(mContext);
 
             // 2. Create Player
-            //mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector/*, loadControl*/);
-            mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, renderersFactory, trackSelector, loadControl);
+            mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector, loadControl);
+            //mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, renderersFactory, trackSelector, loadControl);
 
             mPlayerView.setPlayer(mPlayer);
             progressBarBuffering.setVisibility(View.GONE);
@@ -161,45 +404,6 @@ public class ExoKangjiNew {
     }
 
     public MediaSource buildMediaSource(String inputVideoString) {
-        /*
-        // these are reused for both media sources we create below
-        //DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-        DefaultHttpDataSourceFactory defaultHttpDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent);
-        DefaultDashChunkSource.Factory dashChunkSourceFactory = new DefaultDashChunkSource.Factory(new DefaultHttpDataSourceFactory(userAgent, BANDWIDTH_METER));
-        DefaultHttpDataSourceFactory manifestDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent);
-
-        if (uri.getLastPathSegment().toUpperCase().contains("MP3") || uri.getLastPathSegment().toUpperCase().contains("MP4")) {
-            return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(uri);
-            //return mediaSource;
-        }
-        else if (uri.getLastPathSegment().toUpperCase().contains("M3U8")) {
-            return new HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(uri);
-        }
-        else {
-            return new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(uri);
-        }
-        */
-
-/*
-        mUri = Uri.parse(inputVideoString);
-        // Produces DataSource instances through which media data is loaded.
-        dataSourceFactory = new DefaultDataSourceFactory(mContext, Util.getUserAgent(mContext, mContext.getString(R.string.app_name)), BANDWIDTH_METER);
-        // This is the MediaSource representing the media to be played.
-        MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(mUri);
-
-        //== OPO IKI YAAA ====
-        String filenameArray[] = inputVideoString.split("\\.");
-        if (inputVideoString.toUpperCase().contains("M3U8")) {
-            //videoSource = new HlsMediaSource(mUri, dataSourceFactory, null, null);
-            videoSource = new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(mUri);
-        }
-        else {
-            videoSource = new ExtractorMediaSource(mUri, dataSourceFactory, new DefaultExtractorsFactory(), null, null);
-        }
-        return videoSource;
-*/
-
-
         // these are reused for both media sources we create below
         //DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
         DefaultHttpDataSourceFactory defaultHttpDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent);
@@ -276,7 +480,8 @@ public class ExoKangjiNew {
         mPlayer.prepare(mediaSource);
         mPlayer.setPlayWhenReady(true);
     }
-/*
+
+
     public void checkLinkAndPlayStreaming(String inputLink) {
 
         try {
@@ -309,7 +514,7 @@ public class ExoKangjiNew {
             Log.e(TAG,"(=EXTRAK MANGGIS=) " + e.toString());
         }
     }
-*/
+
     public void playerListener(ProgressBar progressBarBuffering) {
 
         mPlayer.addListener(new Player.EventListener() {
@@ -439,6 +644,5 @@ public class ExoKangjiNew {
             //bufferInitialize(mContext);
         }
     }
+*/
 
-
-}

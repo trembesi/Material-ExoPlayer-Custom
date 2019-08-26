@@ -4,22 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="default_item_padding">8dp</dimen>
 
-    <dimen name="card_margin">5dp</dimen>
-    <dimen name="card_album_radius">8dp</dimen>
-    <dimen name="album_title_padding">5dp</dimen>
-    <dimen name="album_title">20dp</dimen>
-
-    <dimen name="card_margin_grid">10dp</dimen>
-
     <dimen name="text_size_tombol">15sp</dimen>
 
-    <!-- Gamblang -->
-    <dimen name="gamblang_gambar_atas_height">250dp</dimen>
-    <dimen name="gamblang_gambar_play_height">60dp</dimen>
-    <dimen name="gamblang_gambar_play_width">60dp</dimen>
-    <dimen name="gamblang_judul_size">24sp</dimen>
-    <dimen name="gamblang_deskripsi_size">20sp</dimen>
-    <dimen name="gamblang_judul_padding">10dp</dimen>
-    <dimen name="gamblang_deskripsi_padding">10dp</dimen>
 
 </resources>
