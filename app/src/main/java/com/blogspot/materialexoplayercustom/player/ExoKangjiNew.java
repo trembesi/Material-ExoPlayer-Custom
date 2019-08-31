@@ -17,6 +17,7 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -38,6 +39,10 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class ExoKangjiNew {
@@ -58,6 +63,7 @@ public class ExoKangjiNew {
     private String userAgent = "ExoKangji";
     private Context mContext;
     private TextView tvError;
+    private String scheme;
 
     public static ExoKangjiNew getSharedInstance() {
         if (mInstance == null) {
@@ -109,6 +115,7 @@ public class ExoKangjiNew {
 
             mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector, loadControl);
             mPlayerView.setPlayer(mPlayer);
+
         }
 
     }
@@ -119,18 +126,40 @@ public class ExoKangjiNew {
         DefaultHttpDataSourceFactory defaultHttpDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent);
         DefaultDashChunkSource.Factory dashChunkSourceFactory = new DefaultDashChunkSource.Factory(new DefaultHttpDataSourceFactory(userAgent, BANDWIDTH_METER));
         DefaultHttpDataSourceFactory manifestDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent);
+        RtmpDataSourceFactory rtmpDataSourceFactory = new RtmpDataSourceFactory();
+
+
+        try {
+            URI uriX = new URI(inputVideoString);
+            scheme = uriX.getScheme().toUpperCase();
+            Log.d(TAG, "========" + scheme);
+        }
+        catch (URISyntaxException e) {
+        }
 
         mUri = Uri.parse(inputVideoString);
 
-        if (inputVideoString.toUpperCase().contains("MP3") || inputVideoString.toUpperCase().contains("MP4")) {
-            return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+        switch (scheme) {
+            case "RTP" :
+            case "RTSP" :
+            case "RTMP" : {
+                Log.d(TAG, "Play RTMP");
+                return new ProgressiveMediaSource.Factory(rtmpDataSourceFactory).createMediaSource(mUri);
+            }
+            default: {
+                Log.d(TAG, "Play GLOBAL");
+                if (inputVideoString.toUpperCase().contains("MP3") || inputVideoString.toUpperCase().contains("MP4")) {
+                    return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+                }
+                else if (inputVideoString.toUpperCase().contains("M3U8")) {
+                    return new HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+                }
+                else {
+                    return new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(mUri);
+                }
+            }
         }
-        else if (inputVideoString.toUpperCase().contains("M3U8")) {
-            return new HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
-        }
-        else {
-            return new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(mUri);
-        }
+
     }
 
     public void switchScreen(PlayerView oldPlayerView, PlayerView newPlayerView) {

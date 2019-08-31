@@ -34,4 +34,8 @@ dependencies {
 
     implementation 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
     implementation 'com.google.android.exoplayer:exoplayer:2.10.4'
+    implementation 'com.google.android.exoplayer:extension-rtmp:2.10.4'
+    implementation 'com.google.android.exoplayer:extension-cast:2.10.4'
+    implementation 'com.google.android.exoplayer:extension-ima:2.10.4'
+    implementation 'com.google.android.material:material:1.0.0'
 }

@@ -12,8 +12,10 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.blogspot.materialexoplayercustom.player.ConfigPlayerKangji;
 import com.blogspot.materialexoplayercustom.player.ExoKangjiNew;
@@ -22,6 +24,8 @@ import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import at.huber.youtubeExtractor.VideoMeta;
@@ -35,11 +39,16 @@ public class NewPlayerActivity extends AppCompatActivity {
     private PlayerView mPlayerViewCilik, mPlayerViewGedhi;
     private Button btnTest1, btnTest2, btnTest3, btnTest4, btnTest5, btnTest6;
     private String inputSource, outputSource;
+    private EditText etInputLink;
+    private Button btnGoPlay;
 
     private ImageView ivFullscreen;
     private FrameLayout btnFrameFullscreen;
     private boolean isFullScreen = false;
     private Dialog dialogFullscreen;
+
+    private URI xURI;
+    private String scheme;
 
 
     @Override
@@ -97,6 +106,20 @@ public class NewPlayerActivity extends AppCompatActivity {
     private void notoNewLayarCilik() {
         setTitle(TAG);
 
+        etInputLink = findViewById(R.id.et_input_link);
+        btnGoPlay = findViewById(R.id.btn_go);
+        btnGoPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etInputLink.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(NewPlayerActivity.this, "EMPTY INPUT", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    ekstrakManggis(etInputLink.getText().toString().trim());
+                }
+            }
+        });
+
         btnTest1 = findViewById(R.id.new_lc_btn_test_1);
         btnTest1.setText("Test Streaming ANTV");
         btnTest1.setOnClickListener(new View.OnClickListener() {
@@ -138,11 +161,11 @@ public class NewPlayerActivity extends AppCompatActivity {
         });
 
         btnTest5 = findViewById(R.id.new_lc_btn_test_5);
-        btnTest5.setText("Test MP3");
+        btnTest5.setText("RTMP TVMU");
         btnTest5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inputSource = "https://ia800501.us.archive.org/34/items/BurdahEnsemblePearlsAndCoral/Burdah%20Ensemble%20-%20Pearls%20and%20Coral%20%E2%80%93%2013.%20Al%20Madad%20Ya%20Rasul%20Allah.mp3";
+                inputSource = "rtmp://118.97.183.222/discover/muhammadiyahtv";
                 ekstrakManggis(inputSource);
             }
         });
@@ -169,10 +192,68 @@ public class NewPlayerActivity extends AppCompatActivity {
 
     private void ekstrakManggis(String stringLinkContent) {
         inputSource = stringLinkContent;
+
+        try {
+            xURI = new URI(inputSource);
+            scheme = xURI.getScheme().toUpperCase();
+        }
+        catch (URISyntaxException e) {
+
+        }
+
+        switch (scheme) {
+            case "RTP" :
+            case "RTSP" :
+            case "RTMP" : {
+                outputSource = inputSource;
+                ExoKangjiNew.getSharedInstance().playStreamingContent(outputSource);
+                break;
+            }
+            default: {
+                try {
+                    URL url = new URL(inputSource);
+                    //String baseUrl = url.getProtocol() + "://" + url.getHost();
+                    String baseUrl = url.getHost().toUpperCase();
+                    if (baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_1) ||
+                            baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_2) ||
+                            baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_3)) {
+
+                        new YouTubeExtractor(this) {
+                            @Override
+                            public void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta vMeta) {
+                                if (ytFiles != null) {
+                                    int itag = 22;
+                                    outputSource = ytFiles.get(itag).getUrl();
+                                    ExoKangjiNew.getSharedInstance().initializePlayer(NewPlayerActivity.this, mPlayerViewCilik, null);
+                                    ExoKangjiNew.getSharedInstance().playStreamingContent(outputSource);
+                                    Log.d("== PLAY VIDEO ==", ytFiles.get(itag).getUrl());
+                                }
+                            }
+                        }.extract(inputSource, true, true);
+
+                    } else {
+                        // LANGSUNG VIDEO LINK, GAK PERLU EXTRACTOR
+                        outputSource = inputSource;
+                        ExoKangjiNew.getSharedInstance().playStreamingContent(outputSource);
+                        Log.d("== PLAY VIDEO ==", outputSource);
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    Log.e("==EXTRAK MANGGIS==", e.toString());
+                }
+            }
+
+
+        }
+
+
+
+
+        /*
         try {
             URL url = new URL(inputSource);
             //String baseUrl = url.getProtocol() + "://" + url.getHost();
-            String baseUrl = url.getHost();
+            String baseUrl = url.getHost().toUpperCase();
             if (baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_1) ||
                     baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_2) ||
                     baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_3)) {
@@ -200,6 +281,8 @@ public class NewPlayerActivity extends AppCompatActivity {
             e.printStackTrace();
             Log.e("==EXTRAK MANGGIS==", e.toString());
         }
+
+         */
     }
 
     private void initFullscreenButton(PlayerView playerView) {
