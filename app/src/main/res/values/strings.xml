@@ -9,4 +9,6 @@
     <string name="notif_url_error">Error URL</string>
     <string name="snackbar_btn_tutup">CLOSE</string>
 
+    <string name="ijin_judul">Requires permission</string>
+    <string name="ijin_pesan">This application requires permission to use features.\nYou can set it through Application Settings</string>
 </resources>

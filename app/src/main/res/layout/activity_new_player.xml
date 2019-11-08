@@ -8,7 +8,7 @@
 
 
     <RelativeLayout
-        android:id="@+id/new_lc_layout_player"
+        android:id="@+id/layout_player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/black">
@@ -19,8 +19,9 @@
             android:layout_height="275dp"
             app:controller_layout_id="@layout/exo_playback_control_view"
             app:player_layout_id="@layout/exo_player_view"
+            app:show_buffering="always"
             app:surface_type="surface_view"
-            app:show_buffering="always" />
+            app:use_artwork="true" />
 
         <!--ProgressBar
             android:id="@+id/new_lc_pb_buffer"
@@ -28,6 +29,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" /-->
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_player">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/btn_go">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_input_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Input Link" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btn_go"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="@string/cast_play" />
 
     </RelativeLayout>
 
@@ -49,94 +77,69 @@
     </RelativeLayout-->
 
     <ScrollView
-        android:id="@+id/new_scroll_panel_bawah"
+        android:id="@+id/scroll_panel_bottom"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/new_lc_layout_player">
+        android:layout_below="@id/layout_url">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/btn_go">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_input_link"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Input Link" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <Button
-                    android:id="@+id/btn_go"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="@string/cast_play" />
-
-            </RelativeLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                <Button
+                    android:id="@+id/new_lc_btn_test_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Test 1" />
 
-                    <Button
-                        android:id="@+id/new_lc_btn_test_1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Test 1" />
+                <Button
+                    android:id="@+id/new_lc_btn_test_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Test 2" />
 
-                    <Button
-                        android:id="@+id/new_lc_btn_test_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Test 2" />
+                <Button
+                    android:id="@+id/new_lc_btn_test_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Test 3" />
 
-                    <Button
-                        android:id="@+id/new_lc_btn_test_3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Test 3" />
+                <Button
+                    android:id="@+id/new_lc_btn_test_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Test 4" />
 
-                </LinearLayout>
+                <Button
+                    android:id="@+id/new_lc_btn_test_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Test 5" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                <Button
+                    android:id="@+id/new_lc_btn_test_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TEST 5" />
 
-                    <Button
-                        android:id="@+id/new_lc_btn_test_4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Test 4" />
+                <Button
+                    android:id="@+id/new_lc_btn_test_7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Test 7" />
 
-                    <Button
-                        android:id="@+id/new_lc_btn_test_5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Test 5" />
+                <Button
+                    android:id="@+id/new_lc_btn_test_8"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Test 8" />
 
-                    <Button
-                        android:id="@+id/new_lc_btn_test_6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TEST 5" />
-                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
