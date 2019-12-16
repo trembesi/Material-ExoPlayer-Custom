@@ -1,0 +1,57 @@
+{
+  "ERROR": false,
+  "MESSAGE": "fetching sukses",
+  "RESPONSE": [
+    {
+
+      "data_media" : [
+        {
+          "gambar": "https://i.ytimg.com/vi/SZHB6C6XkcE/mqdefault.jpg",
+          "judul": "Alun Alun Nganjuk - YT",
+          "deskripsi": "youtube",
+          "video_path": "https://www.youtube.com/watch?v=WwAbo2I58wk"
+        },
+        {
+          "gambar": "https://i.ytimg.com/vi/SZHB6C6XkcE/mqdefault.jpg",
+          "judul": "Didi kempot - Ambyar",
+          "deskripsi": "youtube",
+          "video_path": "https://www.youtube.com/watch?v=pTgly-Ggisg"
+        },
+        {
+          "gambar": "https://ia800305.us.archive.org/21/items/NasidaRiaSeleksiVolume6-10/identifier.jpg",
+          "judul": "Asyik Santai - Nasida Ria",
+          "deskripsi": "Online MP3",
+          "video_path": "https://ia800305.us.archive.org/21/items/NasidaRiaSeleksiVolume6-10/Nasida%20Ria%20Seleksi%20Volume%206-10%20-%20asyik%20santai.mp3"
+        },
+        {
+          "gambar": "",
+          "judul": "Jogja Istimewa",
+          "deskripsi": "MP4 - Assets Folder",
+          "video_path": "file:///android_asset/jogja_istimewa.MP4"
+        },
+        {
+          "gambar": "",
+          "judul": "Orek Orek",
+          "deskripsi": "MP3 - Assets Folder",
+          "video_path": "file:///android_asset/orek_orek.mp3"
+        },
+        {
+          "gambar": "",
+          "judul": "Indosiar",
+          "deskripsi": "TV Online",
+          "video_path": "http://iptvpremium.site:8888/live/stress/hajar/23.ts"
+        },
+        {
+          "gambar": "",
+          "judul": "CNN Indonesia",
+          "deskripsi": "TV Online",
+          "video_path": "http://iptvpremium.site:8888/live/stress/hajar/77.ts"
+        }
+
+      ]
+
+    }
+
+  ]
+}
+

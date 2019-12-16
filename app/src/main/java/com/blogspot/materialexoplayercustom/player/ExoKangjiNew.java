@@ -3,6 +3,7 @@ package com.blogspot.materialexoplayercustom.player;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.blogspot.materialexoplayercustom.R;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -48,6 +50,8 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.util.Util;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -71,6 +75,9 @@ public class ExoKangjiNew {
     private Context mContext;
     private TextView tvError;
     private String scheme;
+    private Handler mainHandler;
+    private String fileExtUppercase;
+    private MediaSource mediaSource;
 
     public static ExoKangjiNew getSharedInstance() {
         if (mInstance == null) {
@@ -83,6 +90,7 @@ public class ExoKangjiNew {
         this.mContext = mContext;
         this.mPlayerView = mPlayerView;
         mPlayerView.setDefaultArtwork(drawableArtWork);
+        mainHandler = new Handler();
 
         if (mContext == null || mPlayerView == null) {
             return;
@@ -129,8 +137,10 @@ public class ExoKangjiNew {
     }
 
     public MediaSource buildMediaSource(String inputVideoString) {
-
+        Log.e(TAG, "IKI INPUT MEDIA SOURCE: " + inputVideoString);
         mUri = Uri.parse(inputVideoString);
+        fileExtUppercase = getFileExtension(mUri).toUpperCase();
+        Log.e(TAG, "FILE EXT: " + fileExtUppercase);
         DataSpec dataSpec = new DataSpec(mUri);
 
         // these are reused for both media sources we create below
@@ -143,48 +153,41 @@ public class ExoKangjiNew {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(mContext, userAgent);
         DefaultHlsExtractorFactory defaultHlsExtractorFactory = new DefaultHlsExtractorFactory();
         DefaultSsChunkSource.Factory ssChunkSourceFactory = new DefaultSsChunkSource.Factory(new DefaultHttpDataSourceFactory(userAgent, BANDWIDTH_METER));
-        /*
-        try {
-            URI uriX = new URI(inputVideoString);
-            scheme = uriX.getScheme().toUpperCase();
-            Log.d(TAG, "========" + scheme);
-        }
-        catch (URISyntaxException e) {
-        }
-         */
+
 
         int type = Util.inferContentType(mUri);
         switch (type) {
             case C.TYPE_DASH: {
-                Log.d(TAG, "MEDIA TYPE - DASH");
+                Log.e(TAG, "MEDIA TYPE - DASH");
                 return new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(mUri);
             }
             case C.TYPE_SS: {
-                Log.d(TAG, "MEDIA TYPE - SS");
+                Log.e(TAG, "MEDIA TYPE - SS");
                 return new SsMediaSource.Factory(ssChunkSourceFactory, manifestDataSourceFactory).createMediaSource(mUri);
             }
             case C.TYPE_HLS: {
-                Log.d(TAG, "MEDIA TYPE - HLS");
+                Log.e(TAG, "MEDIA TYPE - HLS");
                 return new HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
             }
             case C.TYPE_OTHER: {
+
                 if (mUri.getScheme().toUpperCase().equals("RTP")) {
-                    Log.d(TAG, "MEDIA TYPE - OTHER - RTP");
+                    Log.e(TAG, "MEDIA TYPE - OTHER - RTP");
                     return new ProgressiveMediaSource.Factory(rtmpDataSourceFactory).createMediaSource(mUri);
                 }
                 else if (mUri.getScheme().toUpperCase().equals("RTSP")) {
-                    Log.d(TAG, "MEDIA TYPE - OTHER - RTSP");
+                    Log.e(TAG, "MEDIA TYPE - OTHER - RTSP");
                     return new ProgressiveMediaSource.Factory(rtmpDataSourceFactory).createMediaSource(mUri);
                 }
                 else if (mUri.getScheme().toUpperCase().equals("RTMP")) {
-                    Log.d(TAG, "MEDIA TYPE - OTHER - RTMP");
+                    Log.e(TAG, "MEDIA TYPE - OTHER - RTMP");
                     return new ProgressiveMediaSource.Factory(rtmpDataSourceFactory).createMediaSource(mUri);
                 }
 
                 else {
 
                     if (mUri.getScheme().toUpperCase().equals("ASSET")) {
-                        Log.d(TAG, "MEDIA TYPE - OTHER - LOCAL ASSET");
+                        Log.e(TAG, "MEDIA TYPE - OTHER - LOCAL ASSET");
 
                         // ======== LOCAL MEDIA ASSET ========
                         final AssetDataSource assetDataSource = new AssetDataSource(mContext);
@@ -204,7 +207,7 @@ public class ExoKangjiNew {
                     }
 
                     else if (mUri.getScheme().toUpperCase().equals("FILE")) {
-                        Log.d(TAG, "MEDIA TYPE - OTHER - LOCAL FILE");
+                        Log.e(TAG, "MEDIA TYPE - OTHER - LOCAL FILE");
 
                         // =========== LOCAL MEDIA FILE ============
                         final FileDataSource fileDataSource = new FileDataSource();
@@ -223,70 +226,71 @@ public class ExoKangjiNew {
                         return new ProgressiveMediaSource.Factory(fileFactory).createMediaSource(mUri);
                     }
                     else {
-                        Log.d(TAG, "MEDIA TYPE - OTHER - STREAMING");
-                        return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+                        //Log.e(TAG, "MEDIA TYPE - OTHER - STREAMING");
+                        //return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+
+                        Log.e(TAG, "MEDIA TYPE - OTHER - STREAMING");
+
+                        if (fileExtUppercase.equalsIgnoreCase(".MP3")) {
+                            Log.e(TAG, "MEDIA TYPE - OTHER - STREAMING - .MP3");
+                            return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+                        }
+                        else if (fileExtUppercase.equalsIgnoreCase(".MP4")) {
+                            Log.e(TAG, "MEDIA TYPE - OTHER - STREAMING - .MP4");
+                            return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+                        }
+                        else if (fileExtUppercase.equalsIgnoreCase(".M3U8")) {
+                            Log.e(TAG, "MEDIA TYPE - OTHER - STREAMING - .M3U8");
+                            return new HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+                        }
+                        else {
+                            Log.e(TAG, "MEDIA TYPE - OTHER - STREAMING - ELSE -> PAKSA HLS");
+                            //return new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(mUri);
+                            return new HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+                            //return new ExtractorMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+                        }
+
                     }
 
                 }
 
             }
             default: {
-                Log.d(TAG, "MEDIA TYPE - UNSUPPORTED TYPE: " + type);
+                Log.e(TAG, "MEDIA TYPE - UNSUPPORTED TYPE: " + type);
                 throw new IllegalStateException("Unsupported type: " + type);
             }
         }
 
-        /*
-        switch (scheme) {
-            case "RTP" :
-            case "RTSP" :
-            case "RTMP" : {
-                Log.d(TAG, "Play RTMP");
-                return new ProgressiveMediaSource.Factory(rtmpDataSourceFactory).createMediaSource(mUri);
-            }
-            default: {
 
-                if (extUpperCase.equals(".MP3") || extUpperCase.equals(".MP4")) {
-                    Log.d(TAG, "Play GLOBAL - MP3/MP4");
-                    return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
-                }
-                else if (extUpperCase.equals(".M3U8")) {
-                    Log.d(TAG, "Play GLOBAL - M3U8");
-                    return new HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
-                }
-                else {
-                    Log.d(TAG, "Play GLOBAL - DASH");
-                    return new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(mUri);
-                }
-
-                /*
-                if (inputVideoString.toUpperCase().contains("MP3") || inputVideoString.toUpperCase().contains("MP4")) {
-                    Log.d(TAG, "Play GLOBAL - MP3/MP4");
-                    return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
-                }
-                else if (inputVideoString.toUpperCase().contains("M3U8")) {
-                    return new HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
-                }
-                else {
-                    Log.d(TAG, "Play GLOBAL - DASH");
-                    return new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(mUri);
-                }
-
-            }
-        }
-        */
 
     }
 
     public void switchScreen(PlayerView oldPlayerView, PlayerView newPlayerView) {
+        //mPlayer.clearVideoSurface();
+        //mPlayer.setVideoSurfaceView((SurfaceView) newPlayerView.getVideoSurfaceView());
         PlayerView.switchTargetView(mPlayer, oldPlayerView, newPlayerView);
+        //PlayerView.switchTargetView(oldPlayerView.getPlayer(), oldPlayerView, newPlayerView);
     }
 
-    public void playContent(String inputSource) {
+    public void playContent(String inputSource, boolean isYTSource) {
         mPlayer.stop();
-        MediaSource mediaSource = buildMediaSource(inputSource);
-        mPlayer.clearVideoSurface();
-        mPlayer.setVideoSurfaceView((SurfaceView) mPlayerView.getVideoSurfaceView());
+        //MediaSource mediaSource = buildMediaSource(inputSource);
+
+        if (isYTSource) {
+            Uri xUri = Uri.parse(inputSource);
+            // Create a data source factory.
+            DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(mContext, mContext.getString(R.string.app_name)));
+            // Create a progressive media source pointing to a stream uri.
+            mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(xUri);
+            Log.e(TAG, "isYTSource: " + isYTSource);
+        }
+        else {
+            mediaSource = buildMediaSource(inputSource);
+            Log.e(TAG, "isYTSource: " + isYTSource);
+        }
+
+        //mPlayer.clearVideoSurface();
+        //mPlayer.setVideoSurfaceView((SurfaceView) mPlayerView.getVideoSurfaceView());
         mPlayer.seekTo(mPlayer.getCurrentPosition() + 1);
         mPlayer.prepare(mediaSource, true, false);
         mPlayer.setPlayWhenReady(true);
@@ -352,25 +356,25 @@ public class ExoKangjiNew {
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_BUFFERING:
-                        Log.d(TAG, "(= STATUS PLAYBACK =) - Buffering...");
+                        Log.e(TAG, "(= STATUS PLAYBACK =) - Buffering...");
                         tvError.setVisibility(View.GONE);
                         if (progressBarBuffering != null) {
                             progressBarBuffering.setVisibility(View.VISIBLE);
                         }
                         break;
                     case Player.STATE_ENDED:
-                        Log.d(TAG, "(= STATUS PLAYBACK =) - Ended...");
+                        Log.e(TAG, "(= STATUS PLAYBACK =) - Ended...");
                         tvError.setVisibility(View.GONE);
                         // Activate the force enable
                         if (progressBarBuffering != null) {
                             progressBarBuffering.setVisibility(View.GONE);}
                         break;
                     case Player.STATE_IDLE:
-                        Log.d(TAG, "(= STATUS PLAYBACK =) - Idle...");
+                        Log.e(TAG, "(= STATUS PLAYBACK =) - Idle...");
                         //tvError.setVisibility(View.GONE);
                         break;
                     case Player.STATE_READY:
-                        Log.d(TAG, "(= STATUS PLAYBACK =) - Ready...");
+                        Log.e(TAG, "(= STATUS PLAYBACK =) - Ready...");
                         tvError.setVisibility(View.GONE);
                         //dialogBuffer.cancel();
                         if (progressBarBuffering != null) {
@@ -444,6 +448,12 @@ public class ExoKangjiNew {
             mPlayer.release();
         }
         mPlayer = null;
+    }
+
+    public String getFileExtension(Uri uri) {
+        String file = uri.toString();
+        String fileExtension = "." + FilenameUtils.getExtension(FilenameUtils.getName(file));
+        return fileExtension;
     }
 
 }
@@ -683,25 +693,25 @@ public class ExoKangjiNew {
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_BUFFERING:
-                        Log.d(TAG, "(= STATUS PLAYBACK =) - Buffering...");
+                        Log.e(TAG, "(= STATUS PLAYBACK =) - Buffering...");
                         tvError.setVisibility(View.GONE);
                         if (progressBarBuffering != null) {
                             progressBarBuffering.setVisibility(View.VISIBLE);
                         }
                         break;
                     case Player.STATE_ENDED:
-                        Log.d(TAG, "(= STATUS PLAYBACK =) - Ended...");
+                        Log.e(TAG, "(= STATUS PLAYBACK =) - Ended...");
                         tvError.setVisibility(View.GONE);
                         // Activate the force enable
                         if (progressBarBuffering != null) {
                             progressBarBuffering.setVisibility(View.GONE);}
                         break;
                     case Player.STATE_IDLE:
-                        Log.d(TAG, "(= STATUS PLAYBACK =) - Idle...");
+                        Log.e(TAG, "(= STATUS PLAYBACK =) - Idle...");
                         //tvError.setVisibility(View.GONE);
                         break;
                     case Player.STATE_READY:
-                        Log.d(TAG, "(= STATUS PLAYBACK =) - Ready...");
+                        Log.e(TAG, "(= STATUS PLAYBACK =) - Ready...");
                         tvError.setVisibility(View.GONE);
                         //dialogBuffer.cancel();
                         if (progressBarBuffering != null) {

@@ -8,12 +8,12 @@
     android:gravity="center" >
 
     <RelativeLayout
-        android:id="@+id/new_lc_layout_player_full"
+        android:id="@+id/fs_layout_layar_tancep"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <com.google.android.exoplayer2.ui.PlayerView
-            android:id="@+id/new_lc_player_view_full"
+            android:id="@+id/fs_layar_tancep_full"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:controller_layout_id="@layout/exo_playback_control_view"

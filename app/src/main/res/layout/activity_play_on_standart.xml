@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".onstandart.PlayOnStandartActivity">
+
+    <RelativeLayout
+        android:id="@+id/standart_layout_layar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/black">
+
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/sorot2_layar_cilik"
+            android:layout_width="match_parent"
+            android:layout_height="204dp"
+            app:controller_layout_id="@layout/exo_playback_control_view"
+            app:player_layout_id="@layout/exo_player_view"
+            app:show_buffering="always"
+            app:surface_type="surface_view"
+            app:use_artwork="true" />
+
+        <TextView
+            android:id="@+id/sorot2_tv_error_layar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:shadowColor="@color/black"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="1"
+            android:text="error"
+            android:textColor="@color/putih" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/standart_layout_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/standart_layout_layar">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/standart_btn_go">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/standarat_et_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="URL Video"
+                android:maxLines="2"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/standart_btn_go"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:text="Play" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/standart_layout_konten"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/standart_layout_url"
+        android:background="@color/bg_konten">
+
+        <ProgressBar
+            android:id="@+id/standart_pb_konten"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <TextView
+            android:id="@+id/standart_tv_konten_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="TextView" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/standart_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

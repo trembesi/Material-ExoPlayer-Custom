@@ -1,0 +1,56 @@
+{
+  "ERROR": false,
+  "MESSAGE": "fetching sukses",
+  "RESPONSE": [
+    {
+
+      "data_media" : [
+        {
+          "header": "Pamer Bojo - Didi Kempot - YT",
+          "body": "body konten - Pamer Bojo - Didi Kempot - YT",
+          "footer": "footer Pamer Bojo - Didi Kempot - YT",
+          "thumbnail":"http://i3.ytimg.com/vi/Xo9egupmgoE/maxresdefault.jpg",
+          "video_path": "https://www.youtube.com/watch?v=Xo9egupmgoE"
+        },
+        {
+          "header": "Kalung Emas - Didi kempot",
+          "body": "body konten - Kalung Emas - Didi kempot",
+          "footer": "footer Kalung Emas - Didi kempot",
+          "thumbnail":"https://i.ytimg.com/vi/uD5AexDzksQ/mqdefault.jpg",
+          "video_path": "https://www.youtube.com/watch?v=uD5AexDzksQ"
+        },
+        {
+          "header": "Kartonyono Medhot janji - Denny CakNan - YT",
+          "body": "body konten - Kartonyono Medhot janji - Denny CakNan - YT",
+          "footer": "footer Kartonyono Medhot janji - Denny CakNan - YT",
+          "thumbnail":"http://i3.ytimg.com/vi/WlmWXoP0C0s/maxresdefault.jpg",
+          "video_path": "https://www.youtube.com/watch?v=WlmWXoP0C0s"
+        },
+        {
+          "header": "Pamer Bojo Versi Cendol Dawet - Nella Kharisma - YT",
+          "body": "body konten - Pamer Bojo Versi Cendol Dawet - Nella Kharisma - YT",
+          "footer": "footer Pamer Bojo Versi Cendol Dawet - Nella Kharisma - YT",
+          "thumbnail":"http://i3.ytimg.com/vi/smE_vVasTeU/maxresdefault.jpg",
+          "video_path": "https://www.youtube.com/watch?v=smE_vVasTeU"
+        },
+        {
+          "header": "Test Kosong",
+          "body": "body konten - Test Kosong",
+          "footer": "footer Test Kosong",
+          "thumbnail":"http://i3.ytimg.com/vi/smE_vVasTeU/maxresdefault.jpg",
+          "video_path": ""
+        },
+        {
+          "header": "Wuyung - Manthous - YT",
+          "body": "body konten - Wuyung - Manthous - YT",
+          "footer": "footer Wuyung - Manthous - YT",
+          "thumbnail":"http://i3.ytimg.com/vi/77UImZDumf8/maxresdefault.jpg",
+          "video_path": "https://www.youtube.com/watch?v=77UImZDumf8"
+        }
+      ]
+
+    }
+
+  ]
+}
+
