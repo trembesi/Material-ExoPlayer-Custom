@@ -29,6 +29,11 @@ import com.blogspot.materialexoplayercustom.R;
 import com.blogspot.materialexoplayercustom.player.ConfigPlayerKangji;
 import com.blogspot.materialexoplayercustom.player.ExoKangjiNew;
 import com.blogspot.materialexoplayercustom.tls.MeksoTLS;
+import com.blogspot.materialexoplayercustom.yt_extractor_naveedhassan913.ExtractorException;
+import com.blogspot.materialexoplayercustom.yt_extractor_naveedhassan913.YoutubeStreamExtractor;
+import com.blogspot.materialexoplayercustom.yt_extractor_naveedhassan913.model.YTMedia;
+import com.blogspot.materialexoplayercustom.yt_extractor_naveedhassan913.model.YoutubeMeta;
+import com.blogspot.materialexoplayercustom.yt_extractor_naveedhassan913.utils.LogUtils;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
@@ -119,7 +124,8 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
     @Override
     public void onStandartItemSelected(StandartItem item) {
         Toast.makeText(PlayOnStandartActivity.this, item.getJudul() + "\n" + item.getVideoPath(), Toast.LENGTH_SHORT).show();
-        ekstrakManggis(item.getVideoPath());
+        saringanTahu(item.getVideoPath());
+        //ekstrakManggisNaveedHassan931(item.getVideoPath());
     }
 
 
@@ -293,7 +299,7 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
 
      */
 
-    public void ekstrakManggis(String linkSource) {
+    public void saringanTahu(String linkSource) {
 
         inputSource = linkSource;
         try {
@@ -337,12 +343,16 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
                                         if (ytFile != null) {
                                             outputSource = ytFile.getUrl();
                                             if (outputSource != null && !outputSource.isEmpty()) {
-                                                Log.e(TAG, outputSource);
+                                                Log.e(TAG, "ekstrakManggisHaarigerHarald - URL: " + outputSource);
                                                 ExoKangjiNew.getSharedInstance().playContent(outputSource, true);
                                                 //return;
                                             }
                                         }
                                     }
+                                }
+                                else {
+                                    Log.e(TAG, "ekstrakManggisHaarigerHarald: ZONK");
+                                    ekstrakManggisNaveedHassan931(linkSource);
                                 }
 
                             }
@@ -358,13 +368,72 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
                 }
                 catch (MalformedURLException e) {
                     e.printStackTrace();
-                    Log.e(TAG, "(= EXTRAK MANGGIS =) - " + e.toString());
+                    Log.e(TAG, "(= ERROR ekstrakManggisHaarigerHarald =) - " + e.toString());
                 }
 
                 break;
             }
         }
 
+    }
+
+    private void ekstrakManggisNaveedHassan931(String linkSource) {
+        new YoutubeStreamExtractor(new YoutubeStreamExtractor.ExtractorListner() {
+            @Override
+            public void onExtractionGoesWrong(ExtractorException e) {
+                Log.e(TAG, e.toString());
+            }
+
+            @Override
+            public void onExtractionDone(List<YTMedia> adaptiveStream, List<YTMedia> muxedStream, YoutubeMeta meta) {
+                /*
+                for (YTMedia c:muxedStream) {
+                    //urls_li.add(c.getUrl());
+                    //adapter.notifyDataSetChanged();
+                    Log.e(TAG + " - muxedStream", Integer.toString(c.getItag()));
+                }
+                for (YTMedia c:adativeStream) {
+                    //urls_li.add(c.getUrl());
+                    //adapter.notifyDataSetChanged();
+                    Log.e(TAG + " - adativeStream", Integer.toString(c.getItag()));
+                }
+                //Toast.makeText(getApplicationContext(), meta.getTitle(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), meta.getAuthor(), Toast.LENGTH_LONG).show();
+
+                if (muxedStream.isEmpty()) {
+                    //LogUtils.log("null ha");
+                    Log.e(TAG, "ekstrakManggisNaveedHassan931() : ZONK");
+                    return;
+                }
+
+                String url = muxedStream.get(0).getUrl();
+                //PlayVideo(url);
+                ExoKangjiNew.getSharedInstance().playContent(url, true);
+                 */
+
+                for (YTMedia c:muxedStream) {
+                    Log.e(TAG + " - muxedStream", Integer.toString(c.getItag()));
+                }
+                for (YTMedia c:adaptiveStream) {
+                    Log.e(TAG + " - adaptiveStream", Integer.toString(c.getItag()));
+                }
+
+                if (muxedStream.isEmpty()) {
+                    Log.e(TAG, "muxedStream isEmpty: " + muxedStream);
+                }
+                else {
+                    // 22 = 720p  // 137 = 1080p  // 18 = 480p
+                    //String url = adaptiveStream.get(22).getUrl();
+                    String url = muxedStream.get(0).getUrl();
+                    ExoKangjiNew.getSharedInstance().playContent(url, true);
+                    Log.e(TAG, "ekstrakManggisNaveedHassan931 - muxedStream URL: " + url);
+                }
+
+
+
+
+            }
+        }).Extract(linkSource);
     }
     /*
     private void initFullscreenButton(PlayerView playerView) {
