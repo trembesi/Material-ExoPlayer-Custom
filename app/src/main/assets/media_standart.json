@@ -27,25 +27,25 @@
           "gambar": "",
           "judul": "Jogja Istimewa",
           "deskripsi": "MP4 - Assets Folder",
-          "video_path": "file:///android_asset/jogja_istimewa.MP4"
+          "video_path": "asset:///jogja_istimewa.MP4"
         },
         {
           "gambar": "",
           "judul": "Orek Orek",
           "deskripsi": "MP3 - Assets Folder",
-          "video_path": "file:///android_asset/orek_orek.mp3"
+          "video_path": "asset:///orek_orek.mp3"
         },
         {
           "gambar": "",
           "judul": "Indosiar",
           "deskripsi": "TV Online",
-          "video_path": "http://iptvpremium.site:8888/live/stress/hajar/23.ts"
+          "video_path": "http://202.80.222.130/000001/2/ch15051810235326945512/index.m3u8?virtualDomain=000001.live_hls.zte.com"
         },
         {
           "gambar": "",
           "judul": "CNN Indonesia",
           "deskripsi": "TV Online",
-          "video_path": "http://iptvpremium.site:8888/live/stress/hajar/77.ts"
+          "video_path": "https://live.cnnindonesia.com/livecnn/smil:cnnTV.smil/chunklist_w1705215623_b384000_sleng.m3u8"
         }
 
       ]

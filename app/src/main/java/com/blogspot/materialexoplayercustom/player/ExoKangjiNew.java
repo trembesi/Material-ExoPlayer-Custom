@@ -3,12 +3,13 @@ package com.blogspot.materialexoplayercustom.player;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Handler;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -24,7 +25,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -39,6 +39,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.AssetDataSource;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -49,11 +50,10 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import org.apache.commons.io.FilenameUtils;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class ExoKangjiNew {
@@ -71,13 +71,18 @@ public class ExoKangjiNew {
     Integer playlistIndex = 0;
 
     PlayerView mPlayerView;
-    private String userAgent = "ExoKangji";
+    //private String userAgent = "ExoKangji";
     private Context mContext;
-    private TextView tvError;
+    private TextView tvErrorMessage;
     private String scheme;
-    private Handler mainHandler;
     private String fileExtUppercase;
     private MediaSource mediaSource;
+    // controlling volume state
+    private VolumeState volumeState;
+    private ImageView ivVolume, ivVolumeAnimate;
+    private PlayerControlView controlView;
+    private FrameLayout btnFrameVolume;
+
 
     public static ExoKangjiNew getSharedInstance() {
         if (mInstance == null) {
@@ -90,26 +95,10 @@ public class ExoKangjiNew {
         this.mContext = mContext;
         this.mPlayerView = mPlayerView;
         mPlayerView.setDefaultArtwork(drawableArtWork);
-        mainHandler = new Handler();
 
         if (mContext == null || mPlayerView == null) {
             return;
         }
-        /*
-        if (mPlayerView != null) {
-            tvError = new TextView(mContext);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT
-            );
-            params.addRule(RelativeLayout.CENTER_IN_PARENT);
-            tvError.setLayoutParams(params);
-            tvError.setGravity(Gravity.CENTER);
-            tvError.setText("HAHAHAHAHAH");
-            tvError.setTextColor(Color.parseColor("#FFFFFF"));
-            mPlayerView.addView(tvError);
-        }
-         */
 
         if (mPlayer == null) {
             // Create a new player if the player is null or
@@ -131,13 +120,33 @@ public class ExoKangjiNew {
 
             mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector, loadControl);
             mPlayerView.setPlayer(mPlayer);
+            // Turn on Volume
+            setVolumeControl(VolumeState.ON);
+            playerListener();
 
         }
+
+        tvErrorMessage = mPlayerView.findViewById(R.id.exo_error_message);
+        tvErrorMessage.setText("NGETEST ERROR");
+        tvErrorMessage.setVisibility(View.VISIBLE);
+
+        controlView = mPlayerView.findViewById(R.id.exo_controller);
+        ivVolume = controlView.findViewById(R.id.exo_volume_icon);
+
+        btnFrameVolume = controlView.findViewById(R.id.exo_volume_button);
+        btnFrameVolume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleVolume();
+            }
+        });
 
     }
 
     public MediaSource buildMediaSource(String inputVideoString) {
-        Log.e(TAG, "IKI INPUT MEDIA SOURCE: " + inputVideoString);
+        Log.e(TAG, "(== buildMediaSource: " + inputVideoString);
+
+
         mUri = Uri.parse(inputVideoString);
         fileExtUppercase = getFileExtension(mUri).toUpperCase();
         Log.e(TAG, "FILE EXT: " + fileExtUppercase);
@@ -145,14 +154,14 @@ public class ExoKangjiNew {
 
         // these are reused for both media sources we create below
         DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-        DefaultHttpDataSourceFactory defaultHttpDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent);
-        DefaultDashChunkSource.Factory dashChunkSourceFactory = new DefaultDashChunkSource.Factory(new DefaultHttpDataSourceFactory(userAgent, BANDWIDTH_METER));
-        DefaultHttpDataSourceFactory manifestDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent);
+        DefaultHttpDataSourceFactory defaultHttpDataSourceFactory = new DefaultHttpDataSourceFactory(ConfigPlayerKangji.USER_AGENT);
+        DefaultDashChunkSource.Factory dashChunkSourceFactory = new DefaultDashChunkSource.Factory(new DefaultHttpDataSourceFactory(ConfigPlayerKangji.USER_AGENT, BANDWIDTH_METER));
+        DefaultHttpDataSourceFactory manifestDataSourceFactory = new DefaultHttpDataSourceFactory(ConfigPlayerKangji.USER_AGENT);
         RtmpDataSourceFactory rtmpDataSourceFactory = new RtmpDataSourceFactory();
 
-        DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(mContext, userAgent);
+        DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(mContext, ConfigPlayerKangji.USER_AGENT);
         DefaultHlsExtractorFactory defaultHlsExtractorFactory = new DefaultHlsExtractorFactory();
-        DefaultSsChunkSource.Factory ssChunkSourceFactory = new DefaultSsChunkSource.Factory(new DefaultHttpDataSourceFactory(userAgent, BANDWIDTH_METER));
+        DefaultSsChunkSource.Factory ssChunkSourceFactory = new DefaultSsChunkSource.Factory(new DefaultHttpDataSourceFactory(ConfigPlayerKangji.USER_AGENT, BANDWIDTH_METER));
 
 
         int type = Util.inferContentType(mUri);
@@ -273,27 +282,32 @@ public class ExoKangjiNew {
     }
 
     public void playContent(String inputSource, boolean isYTSource) {
-        mPlayer.stop();
-        //MediaSource mediaSource = buildMediaSource(inputSource);
 
-        if (isYTSource) {
-            Uri xUri = Uri.parse(inputSource);
-            // Create a data source factory.
-            DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(mContext, mContext.getString(R.string.app_name)));
-            // Create a progressive media source pointing to a stream uri.
-            mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(xUri);
-            Log.e(TAG, "isYTSource: " + isYTSource);
-        }
-        else {
-            mediaSource = buildMediaSource(inputSource);
-            Log.e(TAG, "isYTSource: " + isYTSource);
+        if (inputSource != null) {
+            mPlayer.stop();
+            //MediaSource mediaSource = buildMediaSource(inputSource);
+            Log.e(TAG, "(== playContent ==) - " + inputSource);
+
+            if (isYTSource) {
+                Uri xUri = Uri.parse(inputSource);
+                // Create a data source factory.
+                DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(mContext, mContext.getString(R.string.app_name)));
+                // Create a progressive media source pointing to a stream uri.
+                mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(xUri);
+                Log.e(TAG, "isYTSource: " + isYTSource);
+            }
+            else {
+                mediaSource = buildMediaSource(inputSource);
+                Log.e(TAG, "isYTSource: " + isYTSource);
+            }
+
+            //mPlayer.clearVideoSurface();
+            //mPlayer.setVideoSurfaceView((SurfaceView) mPlayerView.getVideoSurfaceView());
+            mPlayer.seekTo(mPlayer.getCurrentPosition() + 1);
+            mPlayer.prepare(mediaSource, true, false);
+            mPlayer.setPlayWhenReady(true);
         }
 
-        //mPlayer.clearVideoSurface();
-        //mPlayer.setVideoSurfaceView((SurfaceView) mPlayerView.getVideoSurfaceView());
-        mPlayer.seekTo(mPlayer.getCurrentPosition() + 1);
-        mPlayer.prepare(mediaSource, true, false);
-        mPlayer.setPlayWhenReady(true);
     }
     /*
     public void playLocalContent(Uri uriLocalContent) {
@@ -334,7 +348,7 @@ public class ExoKangjiNew {
     }
      */
 
-    private void playerListener(ProgressBar progressBarBuffering) {
+    private void playerListener() {
 
         mPlayer.addListener(new Player.EventListener() {
             @Override
@@ -355,33 +369,38 @@ public class ExoKangjiNew {
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
+
                     case Player.STATE_BUFFERING:
                         Log.e(TAG, "(= STATUS PLAYBACK =) - Buffering...");
-                        tvError.setVisibility(View.GONE);
-                        if (progressBarBuffering != null) {
-                            progressBarBuffering.setVisibility(View.VISIBLE);
-                        }
+                        tvErrorMessage.setVisibility(View.GONE);
+                        //screenOffFlag();
                         break;
+
                     case Player.STATE_ENDED:
                         Log.e(TAG, "(= STATUS PLAYBACK =) - Ended...");
-                        tvError.setVisibility(View.GONE);
-                        // Activate the force enable
-                        if (progressBarBuffering != null) {
-                            progressBarBuffering.setVisibility(View.GONE);}
+                        tvErrorMessage.setVisibility(View.GONE);
+                        if (mPlayerView.isControllerVisible()) {
+                            mPlayerView.hideController();
+                        }
+                        //screenOffFlag();
+
                         break;
+
                     case Player.STATE_IDLE:
                         Log.e(TAG, "(= STATUS PLAYBACK =) - Idle...");
-                        //tvError.setVisibility(View.GONE);
+                        if (mPlayerView.isControllerVisible()) {
+                            mPlayerView.hideController();
+                        }
+                        //screenOffFlag();
                         break;
+
                     case Player.STATE_READY:
                         Log.e(TAG, "(= STATUS PLAYBACK =) - Ready...");
-                        tvError.setVisibility(View.GONE);
-                        //dialogBuffer.cancel();
-                        if (progressBarBuffering != null) {
-                            progressBarBuffering.setVisibility(View.GONE);}
+                        tvErrorMessage.setVisibility(View.GONE);
+                        //screenOnFlag();
                         break;
+
                     default:
-                        // status = PlaybackStatus.IDLE;
                         break;
                 }
             }
@@ -399,28 +418,34 @@ public class ExoKangjiNew {
             @Override
             public void onPlayerError(ExoPlaybackException error) {
                 Log.i(TAG, "onPlayerError: ");
-                progressBarBuffering.setVisibility(View.GONE);
-                tvError.setVisibility(View.VISIBLE);
+                //tvErrorMessage.setVisibility(View.VISIBLE);
+                //tvErrorMessage.setText("NGETEST JEBULE PANGGAH ERROR");
 
                 switch (error.type) {
                     case ExoPlaybackException.TYPE_SOURCE:
-                        //tvError.setText("TYPE_SOURCE: " + error.getSourceException().getMessage());
-                        tvError.setText("Error: TYPE_SOURCE");
-                        //tvError.setVisibility(View.VISIBLE);
+                        tvErrorMessage.setText("Error: TYPE_SOURCE");
+                        tvErrorMessage.setVisibility(View.VISIBLE);
+                        if (mPlayerView.isControllerVisible()) {
+                            mPlayerView.hideController();
+                        }
                         Log.e(TAG, "TYPE_SOURCE: " + error.getSourceException().getMessage());
                         break;
 
                     case ExoPlaybackException.TYPE_RENDERER:
-                        //tvError.setText("TYPE_RENDERER: " + error.getRendererException().getMessage());
-                        tvError.setText("Error: TYPE_RENDERER");
-                        //tvError.setVisibility(View.VISIBLE);
+                        tvErrorMessage.setText("Error: TYPE_RENDERER");
+                        tvErrorMessage.setVisibility(View.VISIBLE);
+                        if (mPlayerView.isControllerVisible()) {
+                            mPlayerView.hideController();
+                        }
                         Log.e(TAG, "TYPE_RENDERER: " + error.getRendererException().getMessage());
                         break;
 
                     case ExoPlaybackException.TYPE_UNEXPECTED:
-                        //tvError.setText("TYPE_UNEXPECTED: " + error.getUnexpectedException().getMessage());
-                        tvError.setText("Error: TYPE_UNEXPECTED");
-                        //tvError.setVisibility(View.VISIBLE);
+                        tvErrorMessage.setText("Error: TYPE_UNEXPECTED");
+                        tvErrorMessage.setVisibility(View.VISIBLE);
+                        if (mPlayerView.isControllerVisible()) {
+                            mPlayerView.hideController();
+                        }
                         Log.e(TAG, "TYPE_UNEXPECTED: " + error.getUnexpectedException().getMessage());
                         break;
                 }
@@ -455,6 +480,134 @@ public class ExoKangjiNew {
         String fileExtension = "." + FilenameUtils.getExtension(FilenameUtils.getName(file));
         return fileExtension;
     }
+
+
+    private void toggleVolume() {
+        if (mPlayer != null) {
+            if (volumeState == VolumeState.OFF) {
+                Log.d(TAG, "togglePlaybackState: enabling volume.");
+                setVolumeControl(VolumeState.ON);
+                ivVolume.setImageResource(R.drawable.ic_vol_on);
+            } else if (volumeState == VolumeState.ON) {
+                Log.d(TAG, "togglePlaybackState: disabling volume.");
+                setVolumeControl(VolumeState.OFF);
+                ivVolume.setImageResource(R.drawable.ic_vol_off);
+            }
+        }
+        else {
+            Log.e(TAG, "TOGGLE: " + mPlayer);
+        }
+        Log.e(TAG, "KLIK TOGGLE");
+    }
+
+    private void setVolumeControl(VolumeState state) {
+        volumeState = state;
+        if (state == VolumeState.OFF) {
+            mPlayer.setVolume(0f);
+            animateVolumeControl();
+        } else if (state == VolumeState.ON) {
+            mPlayer.setVolume(1f);
+            animateVolumeControl();
+        }
+    }
+
+    private void animateVolumeControl() {
+        if (ivVolumeAnimate != null) {
+            ivVolumeAnimate.bringToFront();
+            if (volumeState == VolumeState.OFF) {
+                //onrvRequestManager.load(R.drawable.ic_vol_off).into(onrvVolumeControl);
+                Picasso.get().load(R.drawable.ic_vol_off).into(ivVolumeAnimate);
+            } else if (volumeState == VolumeState.ON) {
+                //onrvRequestManager.load(R.drawable.ic_vol_on).into(onrvVolumeControl);
+                Picasso.get().load(R.drawable.ic_vol_on).into(ivVolumeAnimate);
+            }
+            ivVolumeAnimate.animate().cancel();
+
+            ivVolumeAnimate.setAlpha(1f);
+
+            ivVolumeAnimate.animate()
+                    .alpha(0f)
+                    .setDuration(600).setStartDelay(1000);
+        }
+    }
+
+    /**
+     * Volume ENUM
+     */
+    private enum VolumeState {
+        ON, OFF
+    }
+
+     /*
+    private void initFullscreenButton(PlayerView playerView) {
+        PlayerControlView controlView = playerView.findViewById(R.id.exo_controller);
+
+        ivFullscreen = controlView.findViewById(R.id.exo_fullscreen_icon);
+        ivFullscreen.setImageResource(R.drawable.ic_fullscreen_expand);
+
+        btnFrameFullscreen = controlView.findViewById(R.id.exo_fullscreen_button);
+        btnFrameFullscreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //toggleFullScreen();
+
+                if (isFullScreen) {
+                    // lek kondisine wes full screen
+                    closeFullscreen();
+                    //Toast.makeText(NewPlayerActivity.this, "CLOSE", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    // lek kondisine gung full screen
+                    openFullScreen();
+                    //Toast.makeText(NewPlayerActivity.this, "OPEN", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
+    private void openFullScreen() {
+
+        isFullScreen = true;
+
+        dialogFullscreen = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen) {
+            public void onBackPressed() {
+                if (isFullScreen) {
+                    closeFullscreen();
+                }
+                super.onBackPressed();
+            }
+        };
+
+        dialogFullscreen.setContentView(R.layout.fullscreen_player);
+        mPlayerViewGedhi = dialogFullscreen.findViewById(R.id.fs_layar_tancep_full);
+
+        ExoKangjiNew.getSharedInstance().switchScreen(mPlayerViewCilik, mPlayerViewGedhi);
+        //mPlayerViewGedhi.getPlayer().getVideoComponent().clearVideoSurface();
+        //mPlayerViewGedhi.getPlayer().getVideoComponent().setVideoSurfaceView((SurfaceView) mPlayerViewGedhi.getVideoSurfaceView());
+        //playerListener(mPlayerViewGedhi);
+
+        initFullscreenButton(mPlayerViewGedhi);
+        ivFullscreen.setImageResource(R.drawable.ic_fullscreen_shrink);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        dialogFullscreen.show();
+    }
+
+    private void closeFullscreen() {
+
+        isFullScreen = false;
+
+        ExoKangjiNew.getSharedInstance().switchScreen(mPlayerViewGedhi, mPlayerViewCilik);
+        //playerListener(mPlayerViewCilik);
+
+        initFullscreenButton(mPlayerViewCilik);
+        ivFullscreen.setImageResource(R.drawable.ic_fullscreen_expand);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        dialogFullscreen.dismiss();
+    }
+
+     */
+
 
 }
 

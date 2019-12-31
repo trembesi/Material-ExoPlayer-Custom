@@ -1,4 +1,4 @@
-package com.blogspot.materialexoplayercustom.onrecyclerview;
+package com.blogspot.materialexoplayercustom.playeronrv;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.blogspot.materialexoplayercustom.R;
 import com.bumptech.glide.RequestManager;
+import com.squareup.picasso.RequestCreator;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,7 @@ public class KangjiExoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private ArrayList<KangjiExoRVItem> mediaObjects;
     private RequestManager requestManager;
+    private RequestCreator requestCreator;
 
     public KangjiExoRVAdapter(ArrayList<KangjiExoRVItem> mediaObjects,
                               RequestManager requestManager) {

@@ -17,7 +17,7 @@
             android:id="@+id/onrv_tv_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
+            android:paddingBottom="10dp"
             android:text="Header "
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintEnd_toEndOf="parent"
@@ -27,25 +27,24 @@
         <FrameLayout
             android:id="@+id/onrv_frame_container"
             android:layout_width="match_parent"
-            android:layout_height="198dp"
+            android:layout_height="194dp"
+            android:background="#000"
             android:gravity="center"
             android:scaleType="center"
-            android:layout_marginTop="24dp"
-            android:background="#000"
-            app:layout_constraintTop_toBottomOf="@id/onrv_tv_header" >
+            app:layout_constraintTop_toBottomOf="@id/onrv_tv_header">
 
             <ImageView
                 android:id="@+id/onrv_iv_volume_control"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_gravity="end|bottom"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="15dp"
                 android:layout_marginEnd="15dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginBottom="15dp"
                 android:alpha="0"
                 android:animateLayoutChanges="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_volume_on" />
+                android:src="@drawable/ic_vol_on" />
 
             <ImageView
                 android:id="@+id/onrv_iv_thumbnail"
@@ -67,12 +66,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:shadowColor="@color/black"
-                android:shadowDx="2"
-                android:shadowDy="2"
-                android:shadowRadius="1"
-                android:text="error"
-                android:textColor="@color/putih" />
+                android:text="Error"
+                android:visibility="gone" />
         </FrameLayout>
 
         <TextView

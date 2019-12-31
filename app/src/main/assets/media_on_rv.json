@@ -34,9 +34,9 @@
           "video_path": "https://www.youtube.com/watch?v=smE_vVasTeU"
         },
         {
-          "header": "Test Kosong",
-          "body": "body konten - Test Kosong",
-          "footer": "footer Test Kosong",
+          "header": "Test Kosong Lorem ipsum",
+          "body": "body konten - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          "footer": "footer Lorem ipsum",
           "thumbnail":"http://i3.ytimg.com/vi/smE_vVasTeU/maxresdefault.jpg",
           "video_path": ""
         },
@@ -44,8 +44,51 @@
           "header": "Wuyung - Manthous - YT",
           "body": "body konten - Wuyung - Manthous - YT",
           "footer": "footer Wuyung - Manthous - YT",
-          "thumbnail":"http://i3.ytimg.com/vi/77UImZDumf8/maxresdefault.jpg",
+          "thumbnail":"http://i3.ytimg.com/vi/77UImZDumf8/hqdefault.jpg",
           "video_path": "https://www.youtube.com/watch?v=77UImZDumf8"
+        },
+        {
+          "header": "KIDUNG Wahyu KoloSebo - Full HD - YT",
+          "body": "body konten - KIDUNG Wahyu KoloSebo - Full HD",
+          "footer": "footer KIDUNG Wahyu KoloSebo - Full HD",
+          "thumbnail":"http://i3.ytimg.com/vi/gwoZ4Fry9E0/maxresdefault.jpg",
+          "video_path": "https://www.youtube.com/watch?v=gwoZ4Fry9E0"
+        },
+        {
+          "header": "MUNDUR ALON ALON - ILUX ID (OFFICIAL VIDEO) - YT",
+          "body": "body konten - MUNDUR ALON ALON - ILUX ID (OFFICIAL VIDEO)",
+          "footer": "footer MUNDUR ALON ALON - ILUX ID (OFFICIAL VIDEO)",
+          "thumbnail":"http://i3.ytimg.com/vi/zCmHodTpt9I/maxresdefault.jpg",
+          "video_path": "https://www.youtube.com/watch?v=zCmHodTpt9I"
+        },
+        {
+          "header": "LINK YT ANGEL TENAN",
+          "body": "angel di ekstrak",
+          "footer": "angel di ekstrak",
+          "thumbnail":"http://i3.ytimg.com/vi/O2hervOZ3_c/maxresdefault.jpg",
+          "video_path": "https://www.youtube.com/watch?v=O2hervOZ3_c"
+        },
+        {
+          "header": "Jogja Istimewa MP4 - Asset Folder",
+          "body": "body konten - Jogja Istimewa - Asset Folder",
+          "footer": "footer Jogja Istimewa - Asset Folder",
+          "thumbnail":"",
+          "video_path": "asset:///jogja_istimewa.MP4"
+        },
+        {
+          "header": "Orek Orek MP3 - Asset Folder",
+          "body": "body konten - Orek Orek MP3 - Asset Folder",
+          "footer": "footer Orek Orek MP3 - Asset Folder",
+          "thumbnail":"",
+          "video_path": "asset:///orek_orek.mp3"
+        }
+
+      ],
+      "data_konten" : [
+        {
+          "api_key": "AIzaSyAl6FFMGW0iu-c26A5WGxHT-sembrono",
+          "max_result": 20,
+          "visible_threshold": 3
         }
       ]
 

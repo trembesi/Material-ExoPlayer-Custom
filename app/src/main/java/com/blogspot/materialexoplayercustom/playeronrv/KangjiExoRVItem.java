@@ -1,4 +1,4 @@
-package com.blogspot.materialexoplayercustom.onrecyclerview;
+package com.blogspot.materialexoplayercustom.playeronrv;
 
 public class KangjiExoRVItem {
 

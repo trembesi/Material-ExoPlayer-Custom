@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
-import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,7 +36,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 
@@ -94,7 +92,7 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
     Integer playlistIndex = 0;
 
     //PlayerView mPlayerView;
-    private String userAgent = "ExoKangji";
+    //private String userAgent = "ExoKangji";
     private String fileExtUppercase;
 
 
@@ -147,20 +145,20 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
         // noto playerview
         defaultArtWork = getResources().getDrawable(R.drawable.ic_menu_rate);
         mPlayerViewCilik = findViewById(R.id.sorot2_layar_cilik);
-        initFullscreenButton(mPlayerViewCilik);
-        ivFullscreen.setImageResource(R.drawable.ic_fullscreen_expand);
+        //initFullscreenButton(mPlayerViewCilik);
+        //ivFullscreen.setImageResource(R.drawable.ic_fullscreen_expand);
         tvError = findViewById(R.id.sorot2_tv_error_layar);
         tvError.setVisibility(View.INVISIBLE);
 
         ExoKangjiNew.getSharedInstance().initializePlayer(PlayOnStandartActivity.this, mPlayerViewCilik, null, defaultArtWork);
-        playerListener(mPlayerViewCilik);
+        //playerListener(mPlayerViewCilik);
 
     }
 
     private String loadJSONFromAsset() {
         String json = null;
         try {
-            InputStream is = getAssets().open("media.json");
+            InputStream is = getAssets().open("media_standart.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -300,25 +298,29 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
         inputSource = linkSource;
         try {
             xURI = new URI(inputSource);
-            scheme = xURI.getScheme().toUpperCase();
+            scheme = xURI.getScheme().toLowerCase();
         }
         catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
-        Log.e(TAG, "SCHEME: " + scheme);
+        Log.e(TAG, "scheme: " + scheme);
         switch (scheme) {
-            case "RTP" :
-            case "RTSP" :
-            case "RTMP" : {
+            case "rtp" :
+            case "rtsp" :
+            case "rtmp" :
+            case "asset" :
+            case "file" : {
                 outputSource = inputSource;
                 ExoKangjiNew.getSharedInstance().playContent(outputSource, false);
+                break;
             }
+
             default: {
 
                 try {
                     URL url = new URL(inputSource);
-                    String baseUrl = url.getHost().toUpperCase();
+                    String baseUrl = url.getHost().toLowerCase();
                     if (baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_1) ||
                             baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_2) ||
                             baseUrl.equals(ConfigPlayerKangji.YT_BASE_URL_3)) {
@@ -349,6 +351,7 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
                     }
                     else {
                         // LANGSUNG VIDEO LINK, GAK PERLU EXTRACTOR
+                        outputSource = inputSource;
                         ExoKangjiNew.getSharedInstance().playContent(outputSource, false);
                         Log.e(TAG, outputSource);
                     }
@@ -358,15 +361,18 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
                     Log.e(TAG, "(= EXTRAK MANGGIS =) - " + e.toString());
                 }
 
+                break;
             }
         }
 
     }
-
+    /*
     private void initFullscreenButton(PlayerView playerView) {
         PlayerControlView controlView = playerView.findViewById(R.id.exo_controller);
 
         ivFullscreen = controlView.findViewById(R.id.exo_fullscreen_icon);
+        ivFullscreen.setImageResource(R.drawable.ic_fullscreen_expand);
+
         btnFrameFullscreen = controlView.findViewById(R.id.exo_fullscreen_button);
         btnFrameFullscreen.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -386,6 +392,7 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
             }
         });
     }
+
 
     private void openFullScreen() {
 
@@ -426,6 +433,8 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         dialogFullscreen.dismiss();
     }
+
+     */
 
     private void screenOnFlag() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -569,5 +578,8 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
             }
         });
     }
+
+
+
 
 }

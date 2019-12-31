@@ -58,6 +58,22 @@
             android:textStyle="bold" />
 
         <FrameLayout
+            android:id="@+id/exo_volume_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp">
+
+            <ImageView
+                android:id="@+id/exo_volume_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_vol_on" />
+
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/exo_fullscreen_button"
             android:layout_width="32dp"
             android:layout_height="32dp"

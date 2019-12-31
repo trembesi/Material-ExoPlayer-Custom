@@ -1,5 +1,7 @@
 package com.blogspot.materialexoplayercustom.player;
 
+import com.blogspot.materialexoplayercustom.R;
+
 public class ConfigPlayerKangji {
     public static final String KEY_VIDEO_URI = "key_video_uri";
     public static final String KEY_VIDEO_JUDUL = "key_video_judul";
@@ -9,9 +11,9 @@ public class ConfigPlayerKangji {
     //public static final String INTRO = "https://trembesi.github.io/loker/apps/android/sasi_player/files/video/intro.MP4";
     //public static final String INTRO = "https://www.youtube.com/watch?v=KBCI-rK4uq4";
 
-    public static final String YT_BASE_URL_1 = "WWW.YOUTUBE.COM";
-    public static final String YT_BASE_URL_2 = "M.YOUTUBE.COM";
-    public static final String YT_BASE_URL_3 = "YOUTUBE.COM";
+    public static final String YT_BASE_URL_1 = "www.youtube.com";
+    public static final String YT_BASE_URL_2 = "m.youtube.com";
+    public static final String YT_BASE_URL_3 = "youtube.com";
 
     //Minimum Video you want to buffer while Playing
     public static final int MIN_BUFFER_DURATION = 5000;
@@ -24,4 +26,6 @@ public class ConfigPlayerKangji {
 
     //Min video You want to buffer when user resumes video
     public static final int MIN_PLAYBACK_RESUME_BUFFER = 5000;
+
+    public static final String USER_AGENT = "ExoKangji_" + R.string.app_name;
 }
