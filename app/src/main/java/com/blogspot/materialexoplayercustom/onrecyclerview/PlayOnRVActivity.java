@@ -14,13 +14,12 @@ import android.widget.TextView;
 
 import com.blogspot.materialexoplayercustom.ConfigMediaOnRV;
 import com.blogspot.materialexoplayercustom.R;
-import com.blogspot.materialexoplayercustom.playeronrv.ExoKangjiRecyclerView;
-import com.blogspot.materialexoplayercustom.playeronrv.KangjiExoRVAdapter;
-import com.blogspot.materialexoplayercustom.playeronrv.KangjiExoRVItem;
+import com.blogspot.materialexoplayercustom.player.playeronrv.ExoKangjiRecyclerView;
+import com.blogspot.materialexoplayercustom.player.playeronrv.KangjiExoRVAdapter;
+import com.blogspot.materialexoplayercustom.player.playeronrv.KangjiExoRVItem;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
