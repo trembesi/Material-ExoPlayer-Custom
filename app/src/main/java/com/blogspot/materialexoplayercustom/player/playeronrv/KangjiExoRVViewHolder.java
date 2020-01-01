@@ -1,4 +1,4 @@
-package com.blogspot.materialexoplayercustom.playeronrv;
+package com.blogspot.materialexoplayercustom.player.playeronrv;
 
 import android.view.View;
 import android.widget.FrameLayout;
@@ -9,8 +9,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.amulyakhare.textdrawable.TextDrawable;
-import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.blogspot.materialexoplayercustom.R;
 import com.bumptech.glide.RequestManager;
 

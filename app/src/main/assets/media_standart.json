@@ -48,6 +48,18 @@
           "video_path": "https://live.cnnindonesia.com/livecnn/smil:cnnTV.smil/chunklist_w1705215623_b384000_sleng.m3u8"
         }
 
+      ],
+      "data_yt": [
+        {
+          "api_key": "KEY_API_MU_DEWE",
+          "max_result": 20,
+          "visible_threshold": 3,
+          "yt_host" : [
+            "www.youtube.com",
+            "m.youtube.com",
+            "youtube.com"
+          ]
+        }
       ]
 
     }

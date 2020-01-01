@@ -76,7 +76,7 @@ public class ExoKangjiNew {
     private TextView tvErrorMessage;
     private String scheme;
     private String fileExtUppercase;
-    private MediaSource mediaSource;
+    //private MediaSource mediaSource;
     // controlling volume state
     private VolumeState volumeState;
     private ImageView ivVolume, ivVolumeAnimate;
@@ -142,7 +142,7 @@ public class ExoKangjiNew {
         });
 
     }
-
+    /*
     public MediaSource buildMediaSource(String inputVideoString) {
         Log.e(TAG, "(== buildMediaSource: " + inputVideoString);
 
@@ -270,9 +270,8 @@ public class ExoKangjiNew {
             }
         }
 
-
-
     }
+     */
 
     public void switchScreen(PlayerView oldPlayerView, PlayerView newPlayerView) {
         //mPlayer.clearVideoSurface();
@@ -287,7 +286,7 @@ public class ExoKangjiNew {
             mPlayer.stop();
             //MediaSource mediaSource = buildMediaSource(inputSource);
             Log.e(TAG, "(== playContent ==) - " + inputSource);
-
+            /*
             if (isYTSource) {
                 Uri xUri = Uri.parse(inputSource);
                 // Create a data source factory.
@@ -300,11 +299,13 @@ public class ExoKangjiNew {
                 mediaSource = buildMediaSource(inputSource);
                 Log.e(TAG, "isYTSource: " + isYTSource);
             }
+             */
 
             //mPlayer.clearVideoSurface();
             //mPlayer.setVideoSurfaceView((SurfaceView) mPlayerView.getVideoSurfaceView());
             mPlayer.seekTo(mPlayer.getCurrentPosition() + 1);
-            mPlayer.prepare(mediaSource, true, false);
+            //mPlayer.prepare(mediaSource, true, false);
+            mPlayer.prepare(new KangjiBuildMediaSource(mContext, inputSource, isYTSource).buildMediaSource(), true, false);
             mPlayer.setPlayWhenReady(true);
         }
 
@@ -474,13 +475,13 @@ public class ExoKangjiNew {
         }
         mPlayer = null;
     }
-
+    /*
     public String getFileExtension(Uri uri) {
         String file = uri.toString();
         String fileExtension = "." + FilenameUtils.getExtension(FilenameUtils.getName(file));
         return fileExtension;
     }
-
+     */
 
     private void toggleVolume() {
         if (mPlayer != null) {

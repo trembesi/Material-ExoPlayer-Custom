@@ -1,12 +1,10 @@
-package com.blogspot.materialexoplayercustom.playeronrv;
+package com.blogspot.materialexoplayercustom.player.playeronrv;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +20,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.blogspot.materialexoplayercustom.KangjiSaringanTahu;
 import com.blogspot.materialexoplayercustom.R;
 import com.blogspot.materialexoplayercustom.player.ConfigPlayerKangji;
+import com.blogspot.materialexoplayercustom.player.KangjiBuildMediaSource;
 import com.bumptech.glide.RequestManager;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -34,7 +34,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -53,7 +52,6 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.AssetDataSource;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -61,24 +59,13 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.util.Util;
-import com.squareup.picasso.Picasso;
 
 import org.apache.commons.io.FilenameUtils;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
-import at.huber.youtubeExtractor.VideoMeta;
-import at.huber.youtubeExtractor.YouTubeExtractor;
-import at.huber.youtubeExtractor.YtFile;
-
-public class ExoKangjiRecyclerView extends RecyclerView {
+public class ExoKangjiRecyclerView extends RecyclerView implements KangjiSaringanTahu.KangjiSaringanTahuListener {
 
     private static final String TAG = "=== " + ExoKangjiRecyclerView.class.getSimpleName() + " ===";
     /**
@@ -97,9 +84,9 @@ public class ExoKangjiRecyclerView extends RecyclerView {
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
     //private MediaSource mediaSource;
 
-    private URI xURI;
-    private String scheme;
-    private String outputSource;
+    //private URI xURI;
+    //private String scheme;
+    //private String outputSource;
     private Uri mUri;
     private String fileExtUppercase;
 
@@ -133,6 +120,26 @@ public class ExoKangjiRecyclerView extends RecyclerView {
     public ExoKangjiRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
+    }
+
+    @Override
+    public void onHasilSaringan(String outputSource, boolean isYTSource) {
+        //ExoKangjiNew.getSharedInstance().playContent(outputSource, isYTSource);
+
+        /*
+        Uri uri = Uri.parse(outputSource);
+        // Create a data source factory.
+        DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(context, ConfigPlayerKangji.USER_AGENT));
+        // Create a progressive media source pointing to a stream uri.
+        MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+        player.prepare(mediaSource);
+        player.setPlayWhenReady(true);
+         */
+
+
+
+        player.prepare(new KangjiBuildMediaSource(context, outputSource, isYTSource).buildMediaSource());
+        player.setPlayWhenReady(true);
     }
 
     private void init(Context context) {
@@ -444,7 +451,8 @@ public class ExoKangjiRecyclerView extends RecyclerView {
             //player.setPlayWhenReady(true);
 
             if (! mediaUrl.isEmpty()) {
-                saringanTahu(mediaUrl);
+                //saringanTahu(mediaUrl);
+                new KangjiSaringanTahu(context, mediaUrl, this::onHasilSaringan);
             }
             else {
                 stopPlayer();
@@ -452,7 +460,7 @@ public class ExoKangjiRecyclerView extends RecyclerView {
 
         }
     }
-
+/*
     public void saringanTahu(String inputMediaURL) {
 
         try {
@@ -544,6 +552,8 @@ public class ExoKangjiRecyclerView extends RecyclerView {
         }
 
     }
+
+ */
 
     public void rvPlayerListener() {
 

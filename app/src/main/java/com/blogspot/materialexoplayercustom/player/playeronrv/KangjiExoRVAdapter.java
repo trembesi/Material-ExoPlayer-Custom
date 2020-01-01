@@ -1,4 +1,4 @@
-package com.blogspot.materialexoplayercustom.playeronrv;
+package com.blogspot.materialexoplayercustom.player.playeronrv;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;

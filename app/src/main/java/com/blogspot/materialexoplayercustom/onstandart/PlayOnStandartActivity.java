@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.blogspot.materialexoplayercustom.ConfigMedia;
 import com.blogspot.materialexoplayercustom.KangjiRvDividerItemDecoration;
+import com.blogspot.materialexoplayercustom.KangjiSaringanTahu;
 import com.blogspot.materialexoplayercustom.R;
 import com.blogspot.materialexoplayercustom.player.ConfigPlayerKangji;
 import com.blogspot.materialexoplayercustom.player.ExoKangjiNew;
@@ -62,7 +63,7 @@ import at.huber.youtubeExtractor.VideoMeta;
 import at.huber.youtubeExtractor.YouTubeExtractor;
 import at.huber.youtubeExtractor.YtFile;
 
-public class PlayOnStandartActivity extends AppCompatActivity implements StandartAdapter.StandartAdapterListener {
+public class PlayOnStandartActivity extends AppCompatActivity implements StandartAdapter.StandartAdapterListener, KangjiSaringanTahu.KangjiSaringanTahuListener {
 
     private String TAG = "=== " + PlayOnStandartActivity.class.getSimpleName() + " ===";
     private EditText etURL;
@@ -70,7 +71,7 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
     private RecyclerView rvStandart;
     private ProgressBar pbStandart;
     private TextView tvKontenStatus;
-    private boolean isYTSource;
+    //private boolean isYTSource;
     private List<StandartItem> standartList = new ArrayList<>();
     private StandartItem standartItem;
     private StandartAdapter adapter;
@@ -78,9 +79,14 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
     private String scheme;
     private String mediaGambar, mediaJudul, mediaDeskripsi, mediaVideoPath;
 
+    private String gembokGeni;
+    private int maxResult, visibleThreshold;
+    private JSONArray arrayYTHost;
+
+
     // =========== layar tancep ==========
     private PlayerView mPlayerViewCilik, mPlayerViewGedhi;
-    private String inputSource, outputSource;
+    //private String inputSource, outputSource;
     private ImageView ivFullscreen;
     private FrameLayout btnFrameFullscreen;
     private boolean isFullScreen = false;
@@ -123,11 +129,17 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
 
     @Override
     public void onStandartItemSelected(StandartItem item) {
-        Toast.makeText(PlayOnStandartActivity.this, item.getJudul() + "\n" + item.getVideoPath(), Toast.LENGTH_SHORT).show();
-        saringanTahu(item.getVideoPath());
+        //Toast.makeText(PlayOnStandartActivity.this, item.getJudul() + "\n" + item.getVideoPath(), Toast.LENGTH_SHORT).show();
+        //saringanTahu(item.getVideoPath());
         //ekstrakManggisNaveedHassan931(item.getVideoPath());
+        new KangjiSaringanTahu(this, item.getVideoPath(), this::onHasilSaringan);
     }
 
+    @Override
+    public void onHasilSaringan(String outputSource, boolean isYTSource) {
+        Log.e(TAG, "onHasilSaringan: " + "\n" + "outputSource: " + outputSource + "\n" + "isYTSource: " + isYTSource);
+        ExoKangjiNew.getSharedInstance().playContent(outputSource, isYTSource);
+    }
 
     private void notoStandart() {
 
@@ -298,7 +310,7 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
     }
 
      */
-
+/*
     public void saringanTahu(String linkSource) {
 
         inputSource = linkSource;
@@ -386,30 +398,6 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
 
             @Override
             public void onExtractionDone(List<YTMedia> adaptiveStream, List<YTMedia> muxedStream, YoutubeMeta meta) {
-                /*
-                for (YTMedia c:muxedStream) {
-                    //urls_li.add(c.getUrl());
-                    //adapter.notifyDataSetChanged();
-                    Log.e(TAG + " - muxedStream", Integer.toString(c.getItag()));
-                }
-                for (YTMedia c:adativeStream) {
-                    //urls_li.add(c.getUrl());
-                    //adapter.notifyDataSetChanged();
-                    Log.e(TAG + " - adativeStream", Integer.toString(c.getItag()));
-                }
-                //Toast.makeText(getApplicationContext(), meta.getTitle(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), meta.getAuthor(), Toast.LENGTH_LONG).show();
-
-                if (muxedStream.isEmpty()) {
-                    //LogUtils.log("null ha");
-                    Log.e(TAG, "ekstrakManggisNaveedHassan931() : ZONK");
-                    return;
-                }
-
-                String url = muxedStream.get(0).getUrl();
-                //PlayVideo(url);
-                ExoKangjiNew.getSharedInstance().playContent(url, true);
-                 */
 
                 for (YTMedia c:muxedStream) {
                     Log.e(TAG + " - muxedStream", Integer.toString(c.getItag()));
@@ -435,6 +423,8 @@ public class PlayOnStandartActivity extends AppCompatActivity implements Standar
             }
         }).Extract(linkSource);
     }
+
+ */
     /*
     private void initFullscreenButton(PlayerView playerView) {
         PlayerControlView controlView = playerView.findViewById(R.id.exo_controller);
