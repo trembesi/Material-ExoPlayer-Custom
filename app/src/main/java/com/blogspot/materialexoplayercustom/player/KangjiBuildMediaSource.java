@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.blogspot.materialexoplayercustom.R;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -35,6 +34,7 @@ public class KangjiBuildMediaSource {
     private boolean isYTSource;
     private Uri mUri;
     private String fileExtLowercase;
+    private String schemeToLowercase;
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
 
@@ -47,10 +47,13 @@ public class KangjiBuildMediaSource {
     public MediaSource buildMediaSource() {
 
         mUri = Uri.parse(inputVideoString);
+        fileExtLowercase = getFileExtension(mUri).toLowerCase();
+        schemeToLowercase = mUri.getScheme().toLowerCase();
+        DataSpec dataSpec = new DataSpec(mUri);
 
         if (isYTSource) {
             // Create a data source factory.
-            DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(mContext, mContext.getString(R.string.app_name)));
+            DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(mContext, ConfigPlayerKangji.USER_AGENT));
             // Create a progressive media source pointing to a stream uri.
             //mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(xUri);
             Log.e(TAG, "isYTSource: " + isYTSource);
@@ -59,12 +62,7 @@ public class KangjiBuildMediaSource {
         else {
             //mediaSource = buildMediaSource(inputSource);
             Log.e(TAG, "isYTSource: " + isYTSource);
-
-
-            //mUri = Uri.parse(inputVideoString);
-            fileExtLowercase = getFileExtension(mUri).toLowerCase();
             Log.e(TAG, "FILE EXT: " + fileExtLowercase);
-            DataSpec dataSpec = new DataSpec(mUri);
 
             // these are reused for both media sources we create below
             DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
@@ -93,7 +91,78 @@ public class KangjiBuildMediaSource {
                     return new HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
                 }
                 case C.TYPE_OTHER: {
+                    switch (schemeToLowercase) {
+                        case "rtp":
+                            Log.e(TAG, "MEDIA TYPE - OTHER - RTP");
+                            return new ProgressiveMediaSource.Factory(rtmpDataSourceFactory).createMediaSource(mUri);
+                        case "rtsp":
+                            Log.e(TAG, "MEDIA TYPE - OTHER - RTSP");
+                            return new ProgressiveMediaSource.Factory(rtmpDataSourceFactory).createMediaSource(mUri);
+                        case "rtmp":
+                            Log.e(TAG, "MEDIA TYPE - OTHER - RTMP");
+                            return new ProgressiveMediaSource.Factory(rtmpDataSourceFactory).createMediaSource(mUri);
 
+                        default:
+                            switch (schemeToLowercase) {
+                                case "asset":
+                                    Log.e(TAG, "MEDIA TYPE - OTHER - LOCAL ASSET");
+
+                                    // ======== LOCAL MEDIA ASSET ========
+                                    final AssetDataSource assetDataSource = new AssetDataSource(mContext);
+                                    try {
+                                        assetDataSource.open(dataSpec);
+                                    }
+                                    catch (AssetDataSource.AssetDataSourceException e) {
+                                        e.printStackTrace();
+                                    }
+                                    DataSource.Factory assetFactory = new DataSource.Factory() {
+                                        @Override
+                                        public DataSource createDataSource() {
+                                            return assetDataSource;
+                                        }
+                                    };
+                                    return new ProgressiveMediaSource.Factory(assetFactory).createMediaSource(mUri);
+
+                                case "file":
+                                    Log.e(TAG, "MEDIA TYPE - OTHER - LOCAL FILE");
+
+                                    // =========== LOCAL MEDIA FILE ============
+                                    final FileDataSource fileDataSource = new FileDataSource();
+                                    try {
+                                        fileDataSource.open(dataSpec);
+                                    }
+                                    catch (FileDataSource.FileDataSourceException e) {
+                                        e.printStackTrace();
+                                    }
+                                    DataSource.Factory fileFactory = new DataSource.Factory() {
+                                        @Override
+                                        public DataSource createDataSource() {
+                                            return fileDataSource;
+                                        }
+                                    };
+                                    return new ProgressiveMediaSource.Factory(fileFactory).createMediaSource(mUri);
+
+                                default:
+                                    switch (fileExtLowercase) {
+                                        case ".mp3":
+                                            Log.e(TAG, "MEDIA TYPE - OTHER - STREAMING - .mp3");
+                                            return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+                                        case ".mp4":
+                                            Log.e(TAG, "MEDIA TYPE - OTHER - STREAMING - .mp4");
+                                            return new ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+                                        case ".m3u8":
+                                            Log.e(TAG, "MEDIA TYPE - OTHER - STREAMING - .m3u8");
+                                            return new HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+
+                                        default:
+                                            Log.e(TAG, "MEDIA TYPE - OTHER - STREAMING - ELSE -> PAKSA HLS");
+                                            return new HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mUri);
+                                    }
+                            }
+                    }
+
+                    /*
+                    //if (mUri.getScheme().toUpperCase().equals("RTP")) {
                     if (mUri.getScheme().toUpperCase().equals("RTP")) {
                         Log.e(TAG, "MEDIA TYPE - OTHER - RTP");
                         return new ProgressiveMediaSource.Factory(rtmpDataSourceFactory).createMediaSource(mUri);
@@ -179,6 +248,8 @@ public class KangjiBuildMediaSource {
                         }
 
                     }
+
+                     */
 
                 }
                 default: {
